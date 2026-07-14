@@ -1,26 +1,128 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Createch Architects — design tokens (Build prompt §1.1)
+   Light theme only. Gold is an accent, never a surface.
+   ============================================================ */
+
+@theme {
+  /* Color */
+  --color-paper: #faf7f2; /* page background, warm paper */
+  --color-paper-2: #f1ebe2; /* alternate section tint, cards */
+  --color-ink: #111110; /* primary text */
+  --color-ink-60: rgba(17, 17, 16, 0.64); /* secondary text */
+  --color-gold: #f5bf4f; /* brand gold — accents ONLY */
+  --color-gold-deep: #c99427; /* gold when AA contrast needed */
+  --color-line: rgba(17, 17, 16, 0.14); /* hairlines */
+
+  /* Fonts — bound to next/font CSS variables in layout.tsx */
+  --font-serif: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ------------------------------------------------------------
+   Base
+   ------------------------------------------------------------ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+/* Focus — gold ring, visible only for keyboard users */
+:focus-visible {
+  outline: 2px solid var(--color-gold-deep);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+/* Serif display defaults */
+.font-serif {
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+}
+
+/* ------------------------------------------------------------
+   Editorial type helpers (§1.2)
+   ------------------------------------------------------------ */
+.h1 {
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: clamp(2.75rem, 6vw, 6rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.h2 {
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+
+.h3 {
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+/* Dimension caption — drawing-annotation metadata (§1.2) */
+.caption {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--color-ink-60);
+}
+
+/* Editorial gutters — px-5 mobile / px-10 tablet / px-16 desktop (§1.3) */
+.gutter {
+  padding-inline: 1.25rem;
+}
+@media (min-width: 48rem) {
+  .gutter {
+    padding-inline: 2.5rem;
+  }
+}
+@media (min-width: 64rem) {
+  .gutter {
+    padding-inline: 4rem;
+  }
+}
+
+/* ------------------------------------------------------------
+   Reduced motion — every transform/parallax collapses to a fade
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

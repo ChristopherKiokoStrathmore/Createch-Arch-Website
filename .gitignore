@@ -36,6 +36,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# image pipeline — originals & processed web assets NEVER enter the repo
+# (823MB of HEIC/JPG originals live here; only committed code touches them)
+/assets-src/
+/assets-web/
+*.heic
+*.HEIC
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
