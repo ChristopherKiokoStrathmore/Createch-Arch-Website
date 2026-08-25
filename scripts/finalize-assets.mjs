@@ -23,6 +23,9 @@ const refs = new Set();
 for (const m of text.matchAll(/([a-z0-9-]+\/[A-Za-z0-9._-]+\.jpg)/g)) {
   refs.add(m[1].replace(/^images\//, ""));
 }
+// images referenced from components (static paths, not via seed)
+const EXTRA_REFS = ["founder/Anvi_Shah_Profile.jpg"];
+for (const r of EXTRA_REFS) refs.add(r);
 
 const manifest = JSON.parse(
   await readFile(path.join(WEB, "manifest.json"), "utf8")

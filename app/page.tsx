@@ -2,16 +2,30 @@ import Link from "next/link";
 import HeroLineReveal from "@/components/hero-line-reveal";
 import FeaturedWork from "@/components/featured-work";
 import FootprintStrip from "@/components/footprint-strip";
+import Founder from "@/components/founder";
+import BlueprintLines from "@/components/blueprint-lines";
 import SectionIndex from "@/components/section-index";
 import Reveal from "@/components/reveal";
 import { featuredProjects } from "@/content/seed";
 import { heroImage, heroAlt, heroPaths, heroViewBox } from "@/content/hero";
 
 /**
- * Home — exactly 4 sections (law #7): Hero, Featured Work, Studio-in-brief,
- * Contact CTA. Seamless continuous scroll (law #2), nothing locked to 100vh
- * (law #3). Firm detail lives on /studio; here text is minimal (law #5).
+ * Home — 4 sections (law #7): Hero, Featured Work, Studio (+ founder), Contact.
+ * Light theme (law #6), seamless scroll (law #2), nothing locked to 100vh
+ * (law #3). Premium / cinematic within the motion contract — no scroll-snap,
+ * no WebGL. The "from line to built" motif runs as a through-line.
  */
+
+// abstract floor-plan lines for the through-line divider (draw on scroll)
+const PLAN_LINES = [
+  "M 0 132 L 1200 132",
+  "M 60 132 L 60 46 L 380 46 L 380 132",
+  "M 380 46 L 660 46 L 660 96 L 940 96",
+  "M 940 24 L 940 132",
+  "M 60 150 L 380 150",
+  "M 60 144 L 60 156 M 380 144 L 380 156",
+];
+
 export default function Home() {
   return (
     <>
@@ -32,7 +46,7 @@ export default function Home() {
         <FeaturedWork projects={featuredProjects} />
       </section>
 
-      {/* 03 — Studio in brief */}
+      {/* 03 — Studio + Founder */}
       <section className="bg-[var(--color-paper-2)]">
         <div className="gutter mx-auto max-w-[90rem] py-24 md:py-36">
           <SectionIndex number="03" label="Studio" />
@@ -63,10 +77,22 @@ export default function Home() {
             <FootprintStrip />
           </Reveal>
 
-          <Reveal index={4}>
+          {/* line-to-built through-line divider */}
+          <BlueprintLines
+            paths={PLAN_LINES}
+            viewBox="0 0 1200 170"
+            className="mt-20 h-16 w-full opacity-90 md:h-24"
+          />
+
+          {/* founder */}
+          <div className="mt-16 md:mt-20">
+            <Founder />
+          </div>
+
+          <Reveal index={1}>
             <Link
               href="/studio"
-              className="group mt-12 inline-block text-[0.95rem] font-medium"
+              className="group mt-16 inline-block text-[0.95rem] font-medium"
             >
               About the studio
               <span className="ml-1 inline-block transition-transform group-hover:translate-x-1">
@@ -81,7 +107,7 @@ export default function Home() {
       <section className="gutter mx-auto max-w-[90rem] py-24 md:py-36">
         <SectionIndex number="04" label="Contact" />
         <Reveal>
-          <h2 className="h1 max-w-[14ch]">Tell us about your project.</h2>
+          <h2 className="h-display max-w-[14ch]">Tell us about your project.</h2>
         </Reveal>
         <Reveal index={1}>
           <div className="mt-10 flex flex-col gap-3 text-[1.25rem] md:text-[1.5rem]">

@@ -29,6 +29,7 @@ const EDGE_FALLBACK = [2200, 2000, 1800];
 // Source folder → project slug (Build prompt §4). Padel legacy + hires merge.
 const FOLDER_TO_SLUG = {
   "00_Brand_and_Cover": "brand",
+  founder: "founder",
   "01_Networks_Padel_Village": "networks-padel-village",
   "networks-padel-village-hires": "networks-padel-village",
   "02_Le_Meridien_Zanzibar": "le-meridien-zanzibar",

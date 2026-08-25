@@ -4,6 +4,9 @@ import "./globals.css";
 import LenisProvider from "@/components/lenis-provider";
 import Nav from "@/components/nav";
 import Footer from "@/components/footer";
+import { OrganizationJsonLd } from "@/components/json-ld";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -28,6 +31,24 @@ export const metadata: Metadata = {
   },
   description:
     "Createch Architects is a Nairobi practice designing hotels, restaurants and lifestyle destinations across Africa and India.",
+  // Every page inherits this card unless it sets its own — the case studies
+  // override it with the project photograph in their generateMetadata.
+  openGraph: {
+    type: "website",
+    siteName: "Createch Architects",
+    locale: "en_KE",
+    images: [
+      {
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Createch Architects — architecture for hospitality, from first line to final detail.",
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" },
+  alternates: { canonical: "/" },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
@@ -38,6 +59,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable} h-full`}>
       <body className="flex min-h-full flex-col">
+        <OrganizationJsonLd />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:bg-[var(--color-ink)] focus:px-4 focus:py-2 focus:text-[var(--color-paper)]"
@@ -51,6 +73,8 @@ export default function RootLayout({
           </main>
           <Footer />
         </LenisProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

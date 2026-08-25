@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Logo from "./logo";
 
 const LINKS = [
@@ -13,6 +13,9 @@ const LINKS = [
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -21,18 +24,86 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // lock body scroll when the mobile overlay is open
+  /**
+   * Publish the bar's real height as --nav-h so the overlay can sit exactly
+   * beneath it. Measured rather than assumed: the bar grows when the logo
+   * switches to the full wordmark, and the old fixed 57px offset left a gap.
+   */
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
+    const bar = headerRef.current?.querySelector("nav");
+    if (!bar) return;
+    const publish = () =>
+      headerRef.current?.style.setProperty("--nav-h", `${bar.offsetHeight}px`);
+    publish();
+    const observer = new ResizeObserver(publish);
+    observer.observe(bar);
+    return () => observer.disconnect();
+  }, []);
+
+  const close = useCallback(() => {
+    setOpen(false);
+    toggleRef.current?.focus();
+  }, []);
+
+  /**
+   * While the overlay is open it is the only thing on screen, so it has to
+   * behave like one: the page beneath must not scroll, Escape must close it,
+   * and Tab must not walk out of it into links the visitor cannot see.
+   */
+  useEffect(() => {
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    // move focus into the panel so a keyboard user starts inside it
+    const focusables = () =>
+      Array.from(
+        panelRef.current?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled])'
+        ) ?? []
+      );
+    focusables()[0]?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        close();
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      // cycle Tab within the panel and the toggle that opened it
+      const items = [...focusables(), toggleRef.current].filter(
+        (el): el is HTMLElement => Boolean(el)
+      );
+      if (items.length === 0) return;
+
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
-  }, [open]);
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open, close]);
 
   return (
     <header
+      ref={headerRef}
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        scrolled
+        scrolled || open
           ? "border-b border-[var(--color-line)] bg-[var(--color-paper)]/80 backdrop-blur-md"
           : "bg-transparent"
       }`}
@@ -59,6 +130,7 @@ export default function Nav() {
 
         {/* mobile toggle */}
         <button
+          ref={toggleRef}
           type="button"
           className="caption !tracking-[0.12em] text-[var(--color-ink)] md:hidden"
           aria-expanded={open}
@@ -69,11 +141,19 @@ export default function Nav() {
         </button>
       </nav>
 
-      {/* mobile overlay — full-screen paper, plain */}
+      {/*
+        Mobile overlay. Positioned by flowing under the nav bar inside the
+        header rather than by a hardcoded top offset — the old `top-[57px]`
+        broke the moment the bar's height changed.
+      */}
       {open && (
         <div
+          ref={panelRef}
           id="mobile-menu"
-          className="fixed inset-0 top-[57px] z-40 bg-[var(--color-paper)] md:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu"
+          className="fixed inset-x-0 bottom-0 top-[var(--nav-h,3.5rem)] z-40 overflow-y-auto bg-[var(--color-paper)] md:hidden"
         >
           <ul className="gutter flex flex-col gap-6 py-10">
             {LINKS.map((l) => (

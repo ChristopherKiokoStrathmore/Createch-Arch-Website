@@ -1,12 +1,25 @@
 import Link from "next/link";
 import Logo from "./logo";
+import { siteSettings } from "@/content/seed";
 
 /**
  * Footer (Build prompt §3): ink band — the ONLY dark surface on the site.
- * Uses the inverse logo. Social URLs are placeholders pending GATE H1.
+ * Uses the inverse logo.
+ *
+ * Social links are driven by `siteSettings.socials` and a channel with no URL
+ * simply does not render. A practice that sells attention to detail cannot
+ * ship an Instagram link that goes to `#`; an absent link is honest, a broken
+ * one is not. Fill the URLs in content/seed.ts and they appear.
  */
 export default function Footer() {
   const year = new Date().getFullYear();
+
+  const socials = (
+    [
+      { label: "Instagram", href: siteSettings.socials.instagram },
+      { label: "LinkedIn", href: siteSettings.socials.linkedin },
+    ] as const
+  ).filter((s) => s.href);
 
   return (
     <footer className="mt-auto bg-[var(--color-ink)] text-[var(--color-paper)]">
@@ -50,21 +63,33 @@ export default function Footer() {
           </ul>
 
           <ul className="space-y-2">
+            {socials.map((s) => (
+              <li key={s.label}>
+                <a
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-[var(--color-gold)]"
+                >
+                  {s.label}
+                </a>
+              </li>
+            ))}
             <li>
-              <a
-                href="#"
+              <Link
+                href="/work"
                 className="transition-colors hover:text-[var(--color-gold)]"
               >
-                Instagram
-              </a>
+                Work
+              </Link>
             </li>
             <li>
-              <a
-                href="#"
+              <Link
+                href="/studio"
                 className="transition-colors hover:text-[var(--color-gold)]"
               >
-                LinkedIn
-              </a>
+                Studio
+              </Link>
             </li>
             <li>
               <Link
