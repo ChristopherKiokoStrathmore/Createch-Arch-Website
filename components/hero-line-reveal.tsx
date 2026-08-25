@@ -28,7 +28,7 @@ export default function HeroLineReveal({
   const reduced = useReducedMotion();
 
   return (
-    <section className="relative flex min-h-[88svh] w-full flex-col justify-end overflow-hidden bg-[var(--color-paper)]">
+    <section className="relative flex min-h-[88svh] w-full flex-col justify-end overflow-hidden bg-[var(--color-paper)] pt-24 md:pt-28">
       {/* photograph */}
       <motion.div
         className="absolute inset-0"
@@ -40,16 +40,18 @@ export default function HeroLineReveal({
           ease: "easeOut",
         }}
       >
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        {/* paper scrim, bottom-left, for AA on the H1 */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-paper)]/85 via-[var(--color-paper)]/20 to-transparent md:bg-gradient-to-tr md:from-[var(--color-paper)]/80 md:via-transparent" />
+        <div className="kenburns absolute inset-0">
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
+        {/* warm cinematic scrim, bottom, for AA on the H1 */}
+        <div className="scrim-b absolute inset-0" />
       </motion.div>
 
       {/* gold line drawing overlay — skipped entirely under reduced motion */}
@@ -87,10 +89,11 @@ export default function HeroLineReveal({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: reduced ? 0.2 : 1.0, ease: "easeOut" }}
         >
-          <h1 className="h1 max-w-[18ch]">
+          <p className="kicker mb-5">Hospitality · Architecture · Interior Design</p>
+          <h1 className="h-display max-w-[16ch]">
             Architecture for hospitality, from first line to final detail.
           </h1>
-          <p className="mt-6 max-w-[46ch] text-[var(--color-ink)]/80">
+          <p className="mt-7 max-w-[46ch] text-[1.0625rem] text-[var(--color-ink)]/80">
             Createch Architects is a Nairobi practice designing hotels,
             restaurants and lifestyle destinations across Africa and India.
           </p>

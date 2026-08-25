@@ -114,6 +114,55 @@ body {
 }
 
 /* ------------------------------------------------------------
+   Cinematic helpers (premium, light — Reel-4 language)
+   ------------------------------------------------------------ */
+
+/* Oversized display for hero / statement lines */
+.h-display {
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: clamp(2.75rem, 6.4vw, 6rem);
+  line-height: 1.0;
+  letter-spacing: -0.022em;
+}
+
+/* Slow Ken-Burns drift — gives stills cinematic life. Off when reduced. */
+@keyframes kenburns {
+  from {
+    transform: scale(1.03);
+  }
+  to {
+    transform: scale(1.12);
+  }
+}
+.kenburns {
+  animation: kenburns 24s ease-in-out infinite alternate;
+  transform-origin: 55% 45%;
+  will-change: transform;
+}
+
+/* Warm cinematic scrim for text over photography (light theme) */
+.scrim-b {
+  background: linear-gradient(
+    to top,
+    rgba(250, 247, 242, 0.95) 0%,
+    rgba(250, 247, 242, 0.78) 22%,
+    rgba(250, 247, 242, 0.35) 46%,
+    rgba(250, 247, 242, 0) 72%
+  );
+}
+
+/* Kicker label — small caps gold, sits above statement lines */
+.kicker {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: var(--color-gold-deep);
+}
+
+/* ------------------------------------------------------------
    Reduced motion — every transform/parallax collapses to a fade
    ------------------------------------------------------------ */
 @media (prefers-reduced-motion: reduce) {

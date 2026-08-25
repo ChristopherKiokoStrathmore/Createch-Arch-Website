@@ -44,6 +44,14 @@ yarn-error.log*
 *.heic
 *.HEIC
 
+# generated responsive image variants (scripts/build-image-variants.mjs)
+# the .jpg/.png originals under public/images ARE committed; these are not
+public/images/**/*.webp
+
+# script logs
+scripts/*.log
+scripts/.*.log
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

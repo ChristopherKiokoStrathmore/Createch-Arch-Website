@@ -1,18 +1,17 @@
 import Link from "next/link";
-import ParallaxImage from "./parallax-image";
+import CinematicImage from "./cinematic-image";
 import DimensionCaption from "./dimension-caption";
 import Reveal from "./reveal";
 import { SECTOR_LABELS, type Project } from "@/content/seed";
 
 /**
- * Featured work (Build prompt §3.1, S2 + law #4): a large 8-col image with
- * two supporting 4-col images offset below, dimension caption, two-line
- * summary, and a link to the case study. Accepts an ARRAY so a second
- * featured project drops in with no layout change.
+ * Featured work (§3.1 S2 + law #4): a large cinematic 8-col image with two
+ * supporting images offset below, dimension caption, brief, and a link.
+ * Accepts an ARRAY so a second featured project drops in with no layout change.
  */
 export default function FeaturedWork({ projects }: { projects: Project[] }) {
   return (
-    <div className="flex flex-col gap-24 md:gap-36">
+    <div className="flex flex-col gap-28 md:gap-44">
       {projects.map((project, i) => {
         const hero = project.heroImage ?? project.gallery[0]?.file;
         const support = project.gallery
@@ -20,10 +19,10 @@ export default function FeaturedWork({ projects }: { projects: Project[] }) {
           .slice(0, 2);
         return (
           <article key={project.slug} className="grid grid-cols-12 gap-x-6 gap-y-8">
-            {/* large image — 8 cols */}
+            {/* large cinematic image — 8 cols */}
             <Reveal className="col-span-12 md:col-span-8" as="figure">
               {hero && (
-                <ParallaxImage
+                <CinematicImage
                   src={`/images/${hero}`}
                   alt={project.title}
                   aspect="16 / 10"
@@ -33,44 +32,47 @@ export default function FeaturedWork({ projects }: { projects: Project[] }) {
               )}
             </Reveal>
 
-            {/* text column — 4 cols, aligned to the large image */}
-            <Reveal
-              className="col-span-12 flex flex-col justify-end md:col-span-4"
-              index={1}
-            >
-              <DimensionCaption
-                items={[
-                  { label: "Location", value: `${project.location}, ${project.country}` },
-                  { label: "Sector", value: SECTOR_LABELS[project.sector] },
-                  { label: "Role", value: project.role },
-                ]}
-              />
-              <h3 className="h3 mt-5 font-serif text-[1.75rem]">{project.title}</h3>
-              <p className="mt-3 text-[var(--color-ink-60)]">{project.brief}</p>
-              <Link
-                href={`/work/${project.slug}`}
-                className="group mt-6 inline-block w-fit text-[0.95rem] font-medium"
-              >
-                Read the case study
-                <span className="ml-1 inline-block transition-transform group-hover:translate-x-1">
-                  →
-                </span>
-              </Link>
-            </Reveal>
+            {/* text column — 4 cols, aligned to the base of the large image */}
+            <div className="col-span-12 flex flex-col justify-end md:col-span-4">
+              <Reveal>
+                <DimensionCaption
+                  items={[
+                    { label: "Location", value: `${project.location}, ${project.country}` },
+                    { label: "Sector", value: SECTOR_LABELS[project.sector] },
+                    { label: "Role", value: project.role },
+                  ]}
+                />
+              </Reveal>
+              <Reveal index={1}>
+                <h3 className="mt-5 font-serif text-[2rem] leading-[1.08] md:text-[2.25rem]">
+                  {project.title}
+                </h3>
+                <p className="mt-4 text-[var(--color-ink-60)]">{project.brief}</p>
+                <Link
+                  href={`/work/${project.slug}`}
+                  className="group mt-7 inline-block w-fit text-[0.95rem] font-medium"
+                >
+                  Read the case study
+                  <span className="ml-1 inline-block transition-transform group-hover:translate-x-1">
+                    →
+                  </span>
+                </Link>
+              </Reveal>
+            </div>
 
-            {/* two supporting images — offset below, 4 cols each */}
+            {/* two supporting images — offset below, cinematic */}
             {support.map((img, j) => (
               <Reveal
                 key={img.file}
                 as="figure"
-                index={j + 1}
+                index={j}
                 className={
                   j === 0
-                    ? "col-span-6 md:col-span-4 md:col-start-5 md:-mt-16"
-                    : "col-span-6 md:col-span-4"
+                    ? "col-span-6 md:col-span-4 md:col-start-5 md:-mt-20"
+                    : "col-span-6 md:col-span-3"
                 }
               >
-                <ParallaxImage
+                <CinematicImage
                   src={`/images/${img.file}`}
                   alt={img.alt}
                   aspect="4 / 3"
