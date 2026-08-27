@@ -121,7 +121,7 @@ every page of this site.
 
 ```
 /            /work            /studio          /contact       → 200
-/sitemap.xml → 16 URLs        /robots.txt      → sitemap link
+/sitemap.xml → 15 URLs        /robots.txt      → sitemap link
 /nonsense    → the site's own 404, not a platform error page
 ```
 
