@@ -52,12 +52,21 @@ export default function HeroLineReveal({
         </div>
         {/* warm cinematic scrim, bottom, for AA on the H1 */}
         <div className="scrim-b absolute inset-0" />
+        {/* and a light one at the top, so the nav reads over the photograph */}
+        <div className="scrim-t absolute inset-x-0 top-0 h-40 md:h-48" />
+        {/* paper wash under the copy, bottom-left — see .scrim-corner */}
+        <div className="scrim-corner absolute inset-0" />
       </motion.div>
 
       {/* gold line drawing overlay — skipped entirely under reduced motion */}
       {!reduced && paths.length > 0 && (
         <motion.svg
-          className="pointer-events-none absolute inset-0 h-full w-full"
+          // `kenburns` here is not decoration: the photograph below is already
+          // scaled 1.03 by the same animation, so without it the traced lines
+          // sit ~3% out of register with the building from the first frame and
+          // drift further as the zoom runs. Same class, same origin, same
+          // duration — the drawing stays locked to what it is drawing.
+          className="kenburns pointer-events-none absolute inset-0 h-full w-full"
           viewBox={viewBox}
           preserveAspectRatio="xMidYMid slice"
           fill="none"
@@ -83,7 +92,7 @@ export default function HeroLineReveal({
       )}
 
       {/* copy — bottom-left */}
-      <div className="gutter relative z-10 mx-auto w-full max-w-[90rem] pb-16 md:pb-24">
+      <div className="gutter relative z-10 mx-auto w-full max-w-[90rem] pb-12 md:pb-14">
         <motion.div
           initial={{ opacity: 0, y: reduced ? 0 : 8 }}
           animate={{ opacity: 1, y: 0 }}

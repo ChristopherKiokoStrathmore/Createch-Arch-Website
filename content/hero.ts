@@ -1,38 +1,38 @@
 // content/hero.ts — hero photograph + traced line-drawing for the
 // "From Line to Built" signature reveal (Build prompt §2.1).
 //
-// Paths are traced by hand over CED_3747 (native 2200×1469): the sweeping
-// steel court-hall roofline, structural columns, glass court enclosure,
-// umbrella canopies, brick planter, and the foreground paving perspective.
-// Abstract, hairline, gold — they draw in then fade under the photo.
+// Paths are traced by hand over CED_3790 (native 2400×1602): the social lounge
+// under the hexagonal shade canopy, living wall to the left, padel courts
+// beyond. Traced features, left to right: the timber capping of the living
+// wall, the brick planter coping running to the vanishing point, four steel
+// columns, two roof glazing bars, the court enclosure rail and the near edge of
+// the court. Abstract, hairline, gold — they draw in, then fade under the photo.
+//
+// Composition note: the hero is `object-cover`, so on a wide desktop roughly
+// the top and bottom 240px of this 3:2 frame are cropped away. Everything
+// traced here either sits inside that safe band or deliberately runs off the
+// edge; nothing depends on the extreme top or bottom being visible.
 
-export const heroImage = "/images/networks-padel-village/CED_3747.jpg";
+export const heroImage = "/images/networks-padel-village/CED_3790.jpg";
 export const heroAlt =
-  "Networks Padel Village: the Vamos dining terrace, umbrellas and landscaping with the padel courts behind.";
-export const heroViewBox = "0 0 2200 1469";
+  "The social lounge at Networks Padel Village: a hexagonal shade canopy over lounge seating, a planted living wall to one side and the padel courts beyond.";
+export const heroViewBox = "0 0 2400 1602";
 
 export const heroPaths = [
-  // main roof leading edge, sweeping left→right and down
-  "M 40 120 L 560 90 L 1080 300 L 1520 470 L 1780 468",
-  // roof fascia / underside beam
-  "M 560 150 L 1080 355 L 1520 520",
-  // horizon & tree line to the right of the hall
-  "M 1780 468 L 2200 470",
-  // structural steel columns of the court hall
-  "M 470 150 L 470 830",
-  "M 905 320 L 905 800",
-  "M 1335 435 L 1335 780",
-  // top rail of the glass court enclosure
-  "M 40 560 L 905 620 L 1500 662",
-  // court base line
-  "M 40 900 L 700 862 L 1220 842",
-  // central umbrella canopy
-  "M 980 700 Q 1235 555 1490 700",
-  // secondary umbrella canopy
-  "M 1360 690 Q 1520 615 1680 690",
-  // brick planter top edge
-  "M 470 1035 L 1040 1000",
-  // foreground paving perspective lines
-  "M 40 1260 L 900 1035 L 1260 950",
-  "M 720 1469 L 1160 1105 L 1410 1000",
+  // timber capping of the living wall, left
+  "M 30 60 L 300 500",
+  // brick planter coping running toward the vanishing point
+  "M 120 1215 L 730 880",
+  // steel columns
+  "M 372 420 L 372 1000",
+  "M 1212 480 L 1212 900",
+  "M 1600 300 L 1600 1010",
+  "M 1990 400 L 1990 1090",
+  // roof glazing bars receding
+  "M 430 90 L 1180 500",
+  "M 700 40 L 1240 440",
+  // court enclosure top rail
+  "M 1280 480 L 2400 440",
+  // near edge of the court
+  "M 1420 775 L 2400 700",
 ];
