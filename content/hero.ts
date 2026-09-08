@@ -1,38 +1,51 @@
 // content/hero.ts — hero photograph + traced line-drawing for the
 // "From Line to Built" signature reveal (Build prompt §2.1).
 //
-// Paths are traced by hand over CED_3790 (native 2400×1602): the social lounge
-// under the hexagonal shade canopy, living wall to the left, padel courts
-// beyond. Traced features, left to right: the timber capping of the living
-// wall, the brick planter coping running to the vanishing point, four steel
-// columns, two roof glazing bars, the court enclosure rail and the near edge of
-// the court. Abstract, hairline, gold — they draw in, then fade under the photo.
+// The frame is the arrival colonnade at Networks Padel Village, shot in the
+// evening: a faceted timber soffit with a continuous cove light, the planted
+// wall and brick planter beyond, terrazzo underfoot. It replaces the earlier
+// court-side frame, which was a wide midday documentation shot — bright,
+// busy with sponsor banners, and so evenly lit that the copy needed an almost
+// opaque paper wash to stay legible, which erased the photograph it sat on.
+//
+// This frame does the opposite: it is already dark and quiet on the left,
+// where the copy sits (measured ~6:1 against --color-ink with no scrim at
+// all), and its brightest, most detailed passage — the lit timber ceiling —
+// is top-right, away from the type. So the scrims can stay light and the
+// building stays visible. Cropped from the 4000×2252 original at 3070px wide
+// to take the event signage and seated staff off the right edge.
+//
+// Paths are traced by hand over this crop (2400×1761). Left to right: the
+// leading edge of the timber soffit and the three facets of its cove line,
+// three fins of the colonnade wall, the wall-to-floor junction running to the
+// vanishing point, the balustrade top rail and the column beside it.
+// Abstract, hairline, gold — they draw in, then fade under the photo.
 //
 // Composition note: the hero is `object-cover`, so on a wide desktop roughly
-// the top and bottom 240px of this 3:2 frame are cropped away. Everything
-// traced here either sits inside that safe band or deliberately runs off the
-// edge; nothing depends on the extreme top or bottom being visible.
+// the top and bottom sixth of this frame is cropped away. Every traced line
+// either sits inside that safe band or deliberately runs off the edge.
 
-export const heroImage = "/images/networks-padel-village/CED_3790.jpg";
+export const heroImage =
+  "/images/networks-padel-village/Padel_Arrival_Colonnade.jpg";
 export const heroAlt =
-  "The social lounge at Networks Padel Village: a hexagonal shade canopy over lounge seating, a planted living wall to one side and the padel courts beyond.";
-export const heroViewBox = "0 0 2400 1602";
+  "The arrival colonnade at Networks Padel Village: a faceted timber soffit lit by a continuous cove light, a planted wall and brick planter beyond, terrazzo underfoot.";
+export const heroViewBox = "0 0 2400 1761";
 
 export const heroPaths = [
-  // timber capping of the living wall, left
-  "M 30 60 L 300 500",
-  // brick planter coping running toward the vanishing point
-  "M 120 1215 L 730 880",
-  // steel columns
-  "M 372 420 L 372 1000",
-  "M 1212 480 L 1212 900",
-  "M 1600 300 L 1600 1010",
-  "M 1990 400 L 1990 1090",
-  // roof glazing bars receding
-  "M 430 90 L 1180 500",
-  "M 700 40 L 1240 440",
-  // court enclosure top rail
-  "M 1280 480 L 2400 440",
-  // near edge of the court
-  "M 1420 775 L 2400 700",
+  // leading edge of the timber soffit, falling from the top of the frame
+  "M 846 30 L 1030 782",
+  // the three facets of the cove line running back to the far wall
+  "M 1030 782 L 1382 828",
+  "M 1382 828 L 1626 720",
+  "M 1626 720 L 2400 658",
+  // fins of the colonnade wall, left
+  "M 532 486 L 532 1500",
+  "M 686 560 L 686 1440",
+  "M 812 620 L 812 1416",
+  // wall-to-floor junction running toward the vanishing point
+  "M 456 1572 L 1032 1440",
+  // balustrade top rail in front of the planted wall
+  "M 1302 1102 L 2280 1134",
+  // column between the colonnade and the planter
+  "M 1354 828 L 1368 1140",
 ];
