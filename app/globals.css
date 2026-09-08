@@ -12,7 +12,10 @@
   --color-ink: #111110; /* primary text */
   --color-ink-60: rgba(17, 17, 16, 0.64); /* secondary text */
   --color-gold: #f5bf4f; /* brand gold — accents ONLY */
-  --color-gold-deep: #c99427; /* gold when AA contrast needed */
+  /* Gold for TEXT. Must clear 4.5:1 on paper for small type — the old
+     #c99427 measured 2.54:1, which is why kickers and caption labels were
+     effectively invisible over photography. This measures 4.64:1. */
+  --color-gold-deep: #8f6a10;
   --color-line: rgba(17, 17, 16, 0.14); /* hairlines */
 
   /* Fonts — bound to next/font CSS variables in layout.tsx */
@@ -142,14 +145,48 @@ body {
   will-change: transform;
 }
 
-/* Warm cinematic scrim for text over photography (light theme) */
+/* Warm cinematic scrim for text over photography (light theme).
+   Carries a little more weight through the middle than it used to, where the
+   kicker sits — but only a little. The real contrast fix was darkening
+   --color-gold-deep to meet AA; leaning on the scrim instead just hazes over
+   the photograph, which is the one thing the hero exists to show. */
 .scrim-b {
   background: linear-gradient(
     to top,
-    rgba(250, 247, 242, 0.95) 0%,
-    rgba(250, 247, 242, 0.78) 22%,
-    rgba(250, 247, 242, 0.35) 46%,
-    rgba(250, 247, 242, 0) 72%
+    rgba(250, 247, 242, 0.92) 0%,
+    rgba(250, 247, 242, 0.70) 24%,
+    rgba(250, 247, 242, 0.36) 46%,
+    rgba(250, 247, 242, 0.10) 68%,
+    rgba(250, 247, 242, 0) 86%
+  );
+}
+
+/* Corner scrim — a soft paper wash anchored at the bottom-left, exactly where
+   the hero copy sits. This is the honest way to make small type legible over a
+   photograph you do not control: give the TEXT a ground, instead of hazing the
+   whole image. The kicker crosses both bright canopy and the dark bar wall
+   behind it, so no single text colour survives without this. Radial, so there
+   is no hard edge anywhere. */
+.scrim-corner {
+  background: radial-gradient(
+    135% 115% at 0% 100%,
+    rgba(250, 247, 242, 0.94) 0%,
+    rgba(250, 247, 242, 0.76) 26%,
+    rgba(250, 247, 242, 0.46) 50%,
+    rgba(250, 247, 242, 0.18) 70%,
+    rgba(250, 247, 242, 0) 88%
+  );
+}
+
+/* Top scrim — the fixed nav sits on bare photograph until the page scrolls,
+   so ink-on-photo needs a little ground under it. Light touch: it lifts the
+   nav without reading as a bar. */
+.scrim-t {
+  background: linear-gradient(
+    to bottom,
+    rgba(250, 247, 242, 0.62) 0%,
+    rgba(250, 247, 242, 0.26) 50%,
+    rgba(250, 247, 242, 0) 100%
   );
 }
 
