@@ -1,6 +1,5 @@
 import { SECTOR_LABELS, siteSettings, type Project } from "@/content/seed";
-
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://createch.co.ke";
+import { SITE_URL as BASE } from "@/lib/site-url";
 
 /**
  * Structured data (Build prompt §5, Phase 5).

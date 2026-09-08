@@ -7,6 +7,7 @@ import Footer from "@/components/footer";
 import { OrganizationJsonLd } from "@/components/json-ld";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { SITE_ORIGIN } from "@/lib/site-url";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -22,9 +23,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://createch.co.ke"
-  ),
+  metadataBase: SITE_ORIGIN,
   title: {
     default: "Createch Architects",
     template: "%s · Createch Architects",

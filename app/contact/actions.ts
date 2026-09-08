@@ -46,6 +46,16 @@ function clean(
   return kept.join("").trim().slice(0, max);
 }
 
+/**
+ * An environment variable that exists in the Vercel dashboard with a blank
+ * value arrives as `""`, which `??` passes straight through — so read every
+ * optional variable through this rather than defaulting on `??` alone.
+ */
+function env(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : undefined;
+}
+
 export async function submitEnquiry(
   _prev: EnquiryState,
   formData: FormData
@@ -101,8 +111,8 @@ export async function submitEnquiry(
     const resend = new Resend(apiKey);
     const { error } = await resend.emails.send({
       // must be an address on a domain verified in Resend, or delivery fails
-      from: `Createch Architects website <${process.env.MAIL_FROM ?? "website@createch.co.ke"}>`,
-      to: [process.env.CONTACT_TO_EMAIL ?? siteSettings.email],
+      from: `Createch Architects website <${env(process.env.MAIL_FROM) ?? "website@createch.co.ke"}>`,
+      to: [env(process.env.CONTACT_TO_EMAIL) ?? siteSettings.email],
       replyTo: email,
       subject: `Enquiry — ${name}`,
       text: body,
