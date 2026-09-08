@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
+import { SITE_URL as BASE } from "@/lib/site-url";
 
 export const dynamic = "force-static";
-
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://createch.co.ke";
 
 /**
  * robots.txt. Everything is public — this is a portfolio, being indexed is the

@@ -1,9 +1,8 @@
 import type { MetadataRoute } from "next";
 import { projects } from "@/content/seed";
+import { SITE_URL as BASE } from "@/lib/site-url";
 
 export const dynamic = "force-static";
-
-const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://createch.co.ke";
 
 /**
  * Sitemap, served at /sitemap.xml.
