@@ -50,12 +50,10 @@ export default function HeroLineReveal({
             className="object-cover"
           />
         </div>
-        {/* warm cinematic scrim, bottom, for AA on the H1 */}
-        <div className="scrim-b absolute inset-0" />
+        {/* one paper wash, shaped like the copy block — see .scrim-copy */}
+        <div className="scrim-copy absolute inset-0" />
         {/* and a light one at the top, so the nav reads over the photograph */}
         <div className="scrim-t absolute inset-x-0 top-0 h-40 md:h-48" />
-        {/* paper wash under the copy, bottom-left — see .scrim-corner */}
-        <div className="scrim-corner absolute inset-0" />
       </motion.div>
 
       {/* gold line drawing overlay — skipped entirely under reduced motion */}
@@ -98,7 +96,14 @@ export default function HeroLineReveal({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: reduced ? 0.2 : 1.0, ease: "easeOut" }}
         >
-          <p className="kicker mb-5">Hospitality · Architecture · Interior Design</p>
+          {/* ink, not the usual gold: --color-gold-deep is tuned to clear AA
+              on paper (4.64:1) and cannot clear it over a photograph at any
+              scrim strength this hero would tolerate — it measures ~2.1:1
+              against the wash used here. Every other .kicker on the site sits
+              on paper and keeps the gold. */}
+          <p className="kicker mb-5 !text-[var(--color-ink)]">
+            Hospitality · Architecture · Interior Design
+          </p>
           <h1 className="h-display max-w-[16ch]">
             Architecture for hospitality, from first line to final detail.
           </h1>

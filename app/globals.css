@@ -145,47 +145,61 @@ body {
   will-change: transform;
 }
 
-/* Warm cinematic scrim for text over photography (light theme).
-   Carries a little more weight through the middle than it used to, where the
-   kicker sits — but only a little. The real contrast fix was darkening
-   --color-gold-deep to meet AA; leaning on the scrim instead just hazes over
-   the photograph, which is the one thing the hero exists to show. */
-.scrim-b {
+/* Hero scrims.
+   ------------------------------------------------------------------
+   These used to be three stacked paper washes — a bottom gradient at 0.92,
+   a bottom-left radial at 0.94 and a top one at 0.62. Multiplied together
+   they reached ~99.5% opacity exactly where the copy sits, so the hero
+   photograph was, in the one place the eye lands, not visible at all. The
+   old comment already named the trap ("leaning on the scrim just hazes over
+   the photograph") and then fell into it anyway.
+
+   The fix was upstream: a hero frame that is quiet where the type goes and
+   detailed where it isn't. That earns a single, much lighter wash shaped
+   like the copy block rather than smeared across the image.
+
+   Mobile: the copy runs full width at the bottom, so the wash rises from
+   the bottom edge. Tablet and up: the copy is a left-hand column, so the
+   wash is a left-hand column too — which leaves the right of the frame,
+   where the timber soffit and the planted wall are, completely untouched.
+   Measured on the shipped frame at 1920×950 (worst-case pixel, not mean):
+   kicker 8.2:1, body 6.3:1, "View work" 8.1:1 — all clear of AA at 4.5:1. */
+.scrim-copy {
   background: linear-gradient(
     to top,
-    rgba(250, 247, 242, 0.92) 0%,
-    rgba(250, 247, 242, 0.70) 24%,
-    rgba(250, 247, 242, 0.36) 46%,
-    rgba(250, 247, 242, 0.10) 68%,
-    rgba(250, 247, 242, 0) 86%
-  );
-}
-
-/* Corner scrim — a soft paper wash anchored at the bottom-left, exactly where
-   the hero copy sits. This is the honest way to make small type legible over a
-   photograph you do not control: give the TEXT a ground, instead of hazing the
-   whole image. The kicker crosses both bright canopy and the dark bar wall
-   behind it, so no single text colour survives without this. Radial, so there
-   is no hard edge anywhere. */
-.scrim-corner {
-  background: radial-gradient(
-    135% 115% at 0% 100%,
-    rgba(250, 247, 242, 0.94) 0%,
-    rgba(250, 247, 242, 0.76) 26%,
-    rgba(250, 247, 242, 0.46) 50%,
-    rgba(250, 247, 242, 0.18) 70%,
+    rgba(250, 247, 242, 0.86) 0%,
+    rgba(250, 247, 242, 0.80) 30%,
+    rgba(250, 247, 242, 0.66) 48%,
+    rgba(250, 247, 242, 0.42) 62%,
+    rgba(250, 247, 242, 0.16) 76%,
     rgba(250, 247, 242, 0) 88%
   );
 }
+@media (min-width: 48rem) {
+  .scrim-copy {
+    background: linear-gradient(
+      to right,
+      rgba(250, 247, 242, 0.62) 0%,
+      rgba(250, 247, 242, 0.57) 28%,
+      rgba(250, 247, 242, 0.38) 46%,
+      rgba(250, 247, 242, 0.16) 62%,
+      rgba(250, 247, 242, 0.04) 74%,
+      rgba(250, 247, 242, 0) 82%
+    );
+  }
+}
 
 /* Top scrim — the fixed nav sits on bare photograph until the page scrolls,
-   so ink-on-photo needs a little ground under it. Light touch: it lifts the
-   nav without reading as a bar. */
+   and on this frame it sits on the darkest thing in it: the timber soffit.
+   Measured behind the nav links with the Ken-Burns at its full 1.12 scale
+   (its worst case), across 1600×665, 1920×950 and 1440×900, the darkest
+   pixel gives 3.1:1 at 0.45 — under AA — and 5.5:1 at 0.72. It is confined
+   to the top 160-192px, so the ceiling below the nav keeps its full depth. */
 .scrim-t {
   background: linear-gradient(
     to bottom,
-    rgba(250, 247, 242, 0.62) 0%,
-    rgba(250, 247, 242, 0.26) 50%,
+    rgba(250, 247, 242, 0.72) 0%,
+    rgba(250, 247, 242, 0.29) 50%,
     rgba(250, 247, 242, 0) 100%
   );
 }
