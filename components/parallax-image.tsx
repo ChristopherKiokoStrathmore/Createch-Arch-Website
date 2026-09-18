@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useRef } from "react";
+import { PAPER_BLUR } from "@/lib/placeholder";
 import {
   motion,
   useReducedMotion,
@@ -61,6 +62,8 @@ export default function ParallaxImage({
           fill
           sizes={sizes}
           priority={priority}
+          placeholder="blur"
+          blurDataURL={PAPER_BLUR}
           className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
         />
       </motion.div>

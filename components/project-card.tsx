@@ -1,12 +1,16 @@
 import Link from "next/link";
 import ParallaxImage from "./parallax-image";
 import DimensionCaption from "./dimension-caption";
-import { SECTOR_LABELS, type Project } from "@/content/seed";
+import { workCopy, type Project } from "@/content";
+import {
+  isPlaceholderProject,
+  projectCoverSrc,
+  projectTypologyLabel,
+} from "@/lib/project";
 
 /**
- * Project card (Build prompt §3.2). Image frame (4:3), serif title,
- * dimension caption (location · sector · year). Used in the editorial
- * rows of the Work index at varying column spans.
+ * Project card. Image frame, serif title, location · typology · year.
+ * Placeholder entries are labelled so they cannot be read as delivered work.
  */
 export default function ProjectCard({
   project,
@@ -17,18 +21,19 @@ export default function ProjectCard({
   sizes?: string;
   priority?: boolean;
 }) {
-  const cover = project.heroImage ?? project.gallery[0]?.file;
+  const cover = projectCoverSrc(project);
   const items = [
-    { label: "Location", value: `${project.location}` },
-    { label: "Sector", value: SECTOR_LABELS[project.sector] },
+    { label: "Location", value: project.location },
+    { label: "Typology", value: projectTypologyLabel(project) },
   ];
   if (project.year) items.push({ label: "Year", value: String(project.year) });
+  const demo = isPlaceholderProject(project);
 
   return (
     <Link href={`/work/${project.slug}`} className="group block">
       {cover && (
         <ParallaxImage
-          src={`/images/${cover}`}
+          src={cover}
           alt={project.title}
           aspect="4 / 3"
           parallax={false}
@@ -36,7 +41,12 @@ export default function ProjectCard({
           priority={priority}
         />
       )}
-      <h3 className="h3 mt-5 group-hover:text-[var(--color-gold-deep)]">
+      {demo && (
+        <p className="caption mt-4 !tracking-[0.14em] text-[var(--color-gold-deep)]">
+          {workCopy.placeholderLabel}
+        </p>
+      )}
+      <h3 className={`h3 group-hover:text-[var(--color-gold-deep)] ${demo ? "mt-2" : "mt-5"}`}>
         {project.title}
       </h3>
       <DimensionCaption className="mt-3" items={items} />
