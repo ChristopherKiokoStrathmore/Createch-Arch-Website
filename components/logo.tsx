@@ -1,14 +1,25 @@
+import Image from "next/image";
+
 /**
- * Logo (Build prompt §1.5) — PLACEHOLDER until GATE H0.
- * Faithful-in-spirit hexagonal C/A monogram: ink strokes + gold
- * construction lines. Replace `Mark` paths with the real exported SVG
- * (logo-full.svg / logo-inverse.svg) once Illustrator export lands.
+ * Official Createch mark — vertical hexagon C+A with gold construction
+ * lines (public/brand/createch-logo.png). Do not redraw it.
+ *
+ * The PNG is transparent. Charcoal structure + gold lines. On paper (nav)
+ * it sits as-is. On ink (footer) it sits on a paper plate so the charcoal
+ * C+A does not vanish. The letterspaced wordmark is the existing system
+ * lockup, not a new drawing.
  *
  * variant:
- *   "full"    — mark + CREATECH ARCHITECTS wordmark (ink, for nav)
- *   "mark"    — monogram only
- *   "inverse" — paper-white + gold, for the dark footer band / OG images
+ *   "full"    — mark + CREATECH ARCHITECTS (nav, desktop)
+ *   "mark"    — mark only (nav, mobile)
+ *   "inverse" — paper-plated mark + paper wordmark (dark footer)
  */
+export const BRAND_LOGO = {
+  src: "/brand/createch-logo.png",
+  width: 547,
+  height: 768,
+} as const;
+
 export default function Logo({
   variant = "full",
   className = "",
@@ -17,50 +28,38 @@ export default function Logo({
   className?: string;
 }) {
   const inverse = variant === "inverse";
-  const stroke = inverse ? "#faf7f2" : "#111110";
-  const gold = "#f5bf4f";
+  const ink = inverse ? "#faf7f2" : "#111110";
 
-  const Mark = (
-    <svg
-      viewBox="0 0 48 48"
-      width="40"
-      height="40"
-      fill="none"
-      aria-hidden="true"
-      className="shrink-0"
-    >
-      {/* hexagon */}
-      <path
-        d="M24 3 43.2 14v22L24 47 4.8 36V14Z"
-        stroke={stroke}
-        strokeWidth="1.6"
-        strokeLinejoin="round"
-      />
-      {/* gold construction guides */}
-      <path d="M24 3v44" stroke={gold} strokeWidth="0.9" opacity="0.9" />
-      <path d="M4.8 14 43.2 36" stroke={gold} strokeWidth="0.9" opacity="0.55" />
-      {/* C */}
-      <path
-        d="M30 18a8 8 0 1 0 0 12"
-        stroke={stroke}
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      {/* A crossbar accent in gold */}
-      <path d="M19 30h10" stroke={gold} strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
+  const mark = (
+    <Image
+      src={BRAND_LOGO.src}
+      alt=""
+      width={BRAND_LOGO.width}
+      height={BRAND_LOGO.height}
+      unoptimized
+      priority={!inverse}
+      className={inverse ? "h-20 w-auto" : "h-12 w-auto md:h-14"}
+    />
+  );
+
+  const framed = inverse ? (
+    <span className="inline-flex shrink-0 bg-[var(--color-paper)] p-1.5">
+      {mark}
+    </span>
+  ) : (
+    <span className="inline-flex shrink-0">{mark}</span>
   );
 
   if (variant === "mark") {
-    return <span className={className}>{Mark}</span>;
+    return <span className={className}>{framed}</span>;
   }
 
   return (
     <span className={`inline-flex items-center gap-3 ${className}`}>
-      {Mark}
+      {framed}
       <span
         className="text-sm font-medium tracking-[0.18em]"
-        style={{ color: stroke }}
+        style={{ color: ink }}
       >
         CREATECH ARCHITECTS
       </span>

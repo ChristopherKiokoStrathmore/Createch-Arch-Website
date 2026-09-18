@@ -7,7 +7,8 @@
     "build": "node scripts/build-image-variants.mjs && next build",
     "start": "next start",
     "lint": "eslint",
-    "images:variants": "node scripts/build-image-variants.mjs"
+    "images:variants": "node scripts/build-image-variants.mjs",
+    "brand:logo": "node scripts/prepare-logo.mjs && node scripts/build-og-image.mjs"
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1",
