@@ -43,20 +43,26 @@ Security headers and image cache-control are set in `next.config.ts` under
 
 ### Content
 
-All content lives in **`content/seed.ts`** — a single typed file, no CMS.
-Sanity was evaluated and removed: eleven projects that change once or twice a
-year did not justify running a database, a studio and a webhook.
+Visitor-facing words live in **`content/copy.ts`**. Case studies live in
+**`content/seed.ts`**. Import either file, or the barrel `@/content`. There is
+no CMS: eleven projects that change once or twice a year did not justify one.
 
-To change content, edit `content/seed.ts` and push — Vercel rebuilds on commit.
-The shape:
+To change copy (hero, principles, contact labels, enquiry messages), edit
+`content/copy.ts`. To add a case study, edit `content/seed.ts` and drop
+photographs in `public/images/{slug}/`. Push — Vercel rebuilds on commit.
 
-- `projects: Project[]` — the case studies. `order` drives sequence everywhere;
-  `featured: true` puts a project on the homepage; `heroImage` and `gallery`
-  are paths under `public/images/`.
-- `siteSettings` — email, phone, WhatsApp, and the social URLs. **A social
-  link with an empty URL does not render** — that's how the footer avoids
-  dead links.
-- `studioPhilosophy`, `anviBio`, `anviCredentials`, `services` — the Studio page.
+Project shape (`content/seed.ts`):
+
+- `slug`, `title`, `location`, `country`, `year?`, `typology`, `cover`,
+  `gallery`, `brief` (short description)
+- `order` drives sequence; `featured: true` puts a project on the homepage
+- `placeholder: true` marks a demo plate — never a claimed Createch building
+- `underCreatech` marks work delivered under the practice
+
+`site` in `content/copy.ts` holds email, phone, WhatsApp, and social URLs.
+**A social link with an empty URL does not render.** Street address
+(`site.address.line1`) is blank until the practice confirms one — do not
+invent a Nairobi street.
 
 > **Attribution integrity.** `underCreatech` marks the one project delivered
 > under the practice. The other ten are Anvi's earlier work with other firms and
@@ -102,9 +108,9 @@ every page of this site.
    | Variable | Notes |
    | --- | --- |
    | `NEXT_PUBLIC_SITE_URL` | `https://createch.co.ke`. Baked in at build time — changing it needs a redeploy, not a restart. |
-   | `RESEND_API_KEY` | Without it the form does not silently fail; it tells the visitor to email directly. |
-   | `CONTACT_TO_EMAIL` | Where enquiries land. |
-   | `MAIL_FROM` | Must be on a domain **verified in Resend**, or delivery is rejected. |
+   | `RESEND_API_KEY` | Required to send. Without it the form does not silently fail; it tells the visitor to email directly. |
+   | `ENQUIRY_TO_EMAIL` | Where enquiries land. Falls back to `CONTACT_TO_EMAIL`, then `anvi@createch.co.ke`. |
+   | `ENQUIRY_FROM_EMAIL` | Must be on a domain **verified in Resend**, or delivery is rejected. Falls back to `MAIL_FROM`. |
 
 3. **Point the domain at Vercel.** In Truehost's DNS, add the A / CNAME records
    Vercel gives you for the apex and `www`. Leave MX and any mail-related TXT

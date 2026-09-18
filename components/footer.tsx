@@ -1,23 +1,25 @@
 import Link from "next/link";
 import Logo from "./logo";
-import { siteSettings } from "@/content/seed";
+import {
+  footerCopy,
+  mailtoHref,
+  site,
+  telHref,
+  waHref,
+} from "@/content";
 
 /**
- * Footer (Build prompt §3): ink band — the ONLY dark surface on the site.
- * Uses the inverse logo.
- *
- * Social links are driven by `siteSettings.socials` and a channel with no URL
- * simply does not render. A practice that sells attention to detail cannot
- * ship an Instagram link that goes to `#`; an absent link is honest, a broken
- * one is not. Fill the URLs in content/seed.ts and they appear.
+ * Footer — ink band, the only dark surface. Contact comes from `site` in
+ * `@/content`; empty social URLs do not render. Street address is omitted
+ * until `site.address.line1` is filled.
  */
 export default function Footer() {
   const year = new Date().getFullYear();
 
   const socials = (
     [
-      { label: "Instagram", href: siteSettings.socials.instagram },
-      { label: "LinkedIn", href: siteSettings.socials.linkedin },
+      { label: "Instagram", href: site.socials.instagram },
+      { label: "LinkedIn", href: site.socials.linkedin },
     ] as const
   ).filter((s) => s.href);
 
@@ -27,7 +29,7 @@ export default function Footer() {
         <div>
           <Logo variant="inverse" />
           <p className="caption mt-6 !text-[var(--color-paper)]/60">
-            Hospitality · Architecture · Interior Design
+            {site.kicker.replace(/ · /g, " · ")}
           </p>
         </div>
 
@@ -35,23 +37,23 @@ export default function Footer() {
           <ul className="space-y-2">
             <li>
               <a
-                href="mailto:anvi@createch.co.ke"
+                href={mailtoHref(site.email)}
                 className="transition-colors hover:text-[var(--color-gold)]"
               >
-                anvi@createch.co.ke
+                {site.email}
               </a>
             </li>
             <li>
               <a
-                href="tel:+254733622848"
+                href={telHref(site.phone)}
                 className="transition-colors hover:text-[var(--color-gold)]"
               >
-                +254 733 622 848
+                {site.phone}
               </a>
             </li>
             <li>
               <a
-                href="https://wa.me/254733622848"
+                href={waHref(site.whatsapp)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition-colors hover:text-[var(--color-gold)]"
@@ -59,7 +61,7 @@ export default function Footer() {
                 WhatsApp
               </a>
             </li>
-            <li className="text-[var(--color-paper)]/60">Nairobi, Kenya</li>
+            <li className="text-[var(--color-paper)]/60">{site.location}</li>
           </ul>
 
           <ul className="space-y-2">
@@ -80,7 +82,7 @@ export default function Footer() {
                 href="/work"
                 className="transition-colors hover:text-[var(--color-gold)]"
               >
-                Work
+                {footerCopy.work}
               </Link>
             </li>
             <li>
@@ -88,7 +90,7 @@ export default function Footer() {
                 href="/studio"
                 className="transition-colors hover:text-[var(--color-gold)]"
               >
-                Studio
+                {footerCopy.studio}
               </Link>
             </li>
             <li>
@@ -96,7 +98,7 @@ export default function Footer() {
                 href="/contact"
                 className="transition-colors hover:text-[var(--color-gold)]"
               >
-                Start a project
+                {footerCopy.start}
               </Link>
             </li>
           </ul>
@@ -105,7 +107,7 @@ export default function Footer() {
 
       <div className="gutter mx-auto max-w-[90rem] border-t border-[var(--color-paper)]/15 py-6">
         <p className="caption !text-[var(--color-paper)]/50">
-          © Createch Architects Ltd {year}
+          © {site.legalName} {year}
         </p>
       </div>
     </footer>

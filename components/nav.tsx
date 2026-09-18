@@ -3,12 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Logo from "./logo";
-
-const LINKS = [
-  { href: "/work", label: "Work" },
-  { href: "/studio", label: "Studio" },
-  { href: "/contact", label: "Contact" },
-];
+import { nav } from "@/content/copy";
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -24,11 +19,6 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /**
-   * Publish the bar's real height as --nav-h so the overlay can sit exactly
-   * beneath it. Measured rather than assumed: the bar grows when the logo
-   * switches to the full wordmark, and the old fixed 57px offset left a gap.
-   */
   useEffect(() => {
     const bar = headerRef.current?.querySelector("nav");
     if (!bar) return;
@@ -45,18 +35,12 @@ export default function Nav() {
     toggleRef.current?.focus();
   }, []);
 
-  /**
-   * While the overlay is open it is the only thing on screen, so it has to
-   * behave like one: the page beneath must not scroll, Escape must close it,
-   * and Tab must not walk out of it into links the visitor cannot see.
-   */
   useEffect(() => {
     if (!open) return;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    // move focus into the panel so a keyboard user starts inside it
     const focusables = () =>
       Array.from(
         panelRef.current?.querySelectorAll<HTMLElement>(
@@ -73,7 +57,6 @@ export default function Nav() {
       }
       if (event.key !== "Tab") return;
 
-      // cycle Tab within the panel and the toggle that opened it
       const items = [...focusables(), toggleRef.current].filter(
         (el): el is HTMLElement => Boolean(el)
       );
@@ -114,9 +97,8 @@ export default function Nav() {
           <Logo variant="full" className="hidden md:inline-flex" />
         </Link>
 
-        {/* desktop links */}
         <ul className="hidden items-center gap-8 md:flex">
-          {LINKS.map((l) => (
+          {nav.map((l) => (
             <li key={l.href}>
               <Link
                 href={l.href}
@@ -128,7 +110,6 @@ export default function Nav() {
           ))}
         </ul>
 
-        {/* mobile toggle */}
         <button
           ref={toggleRef}
           type="button"
@@ -141,11 +122,6 @@ export default function Nav() {
         </button>
       </nav>
 
-      {/*
-        Mobile overlay. Positioned by flowing under the nav bar inside the
-        header rather than by a hardcoded top offset — the old `top-[57px]`
-        broke the moment the bar's height changed.
-      */}
       {open && (
         <div
           ref={panelRef}
@@ -156,7 +132,7 @@ export default function Nav() {
           className="fixed inset-x-0 bottom-0 top-[var(--nav-h,3.5rem)] z-40 overflow-y-auto bg-[var(--color-paper)] md:hidden"
         >
           <ul className="gutter flex flex-col gap-6 py-10">
-            {LINKS.map((l) => (
+            {nav.map((l) => (
               <li key={l.href}>
                 <Link
                   href={l.href}

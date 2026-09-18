@@ -3,36 +3,13 @@
 import { useActionState } from "react";
 import { submitEnquiry } from "@/app/contact/actions";
 import { EMPTY_STATE } from "@/app/contact/enquiry-state";
-import { siteSettings } from "@/content/seed";
+import { enquiryCopy, mailtoHref, site, waHref } from "@/content/copy";
 
 /**
- * Enquiry form (Build prompt §3.5, Phase 4).
- *
- * Wired straight to a Server Action, so it works with JavaScript disabled:
- * React posts the form natively and Next runs the action on the server. With
- * JS, `useActionState` gives us the pending state and inline field errors
- * without a page transition.
- *
- * The fields mirror the four prompts in the "Your brief" section, so what the
- * page asks for and what the form collects stay the same question.
+ * Enquiry form. Server Action, works without JavaScript.
+ * Fields: name, email, phone (optional), project type (optional), plus the
+ * brief prompts (site, stage, dates) and a message. Honeypot on `company`.
  */
-const PROJECT_TYPES = [
-  "Hotel or lodge",
-  "Restaurant, bar or café",
-  "Retail or mixed-use",
-  "Private residence",
-  "Workplace",
-  "Something else",
-];
-
-const STAGES = [
-  "Just an idea",
-  "Feasibility",
-  "Concept design",
-  "An existing scheme that needs resolving",
-  "Ready for site",
-];
-
 const FIELD =
   "mt-2 w-full border bg-[var(--color-paper)] px-4 py-3 text-[0.95rem] " +
   "text-[var(--color-ink)] transition-colors placeholder:text-[var(--color-ink-60)] " +
@@ -56,17 +33,16 @@ export default function EnquiryForm() {
   if (state.status === "sent") {
     return (
       <div className="border-l-2 border-[var(--color-gold)] pl-5">
-        <p className="h3 font-serif">Thank you — that has reached Anvi.</p>
+        <p className="h3 font-serif">{enquiryCopy.sentTitle}</p>
         <p className="mt-3 max-w-[46ch] text-[var(--color-ink-60)]">
-          You can expect a reply within two working days. If it is urgent,
-          WhatsApp is faster:{" "}
+          {enquiryCopy.sentBody}{" "}
           <a
-            href={`https://wa.me/${siteSettings.whatsapp}`}
+            href={waHref(site.whatsapp)}
             target="_blank"
             rel="noopener noreferrer"
             className="text-[var(--color-ink)] underline decoration-[var(--color-gold)] underline-offset-4"
           >
-            {siteSettings.phone}
+            {site.phone}
           </a>
           .
         </p>
@@ -76,7 +52,6 @@ export default function EnquiryForm() {
 
   return (
     <form action={formAction} className="grid gap-6 sm:grid-cols-2">
-      {/* honeypot — real people never see it, bots fill it in */}
       <div aria-hidden="true" className="hidden">
         <label htmlFor="company">Company</label>
         <input
@@ -131,6 +106,27 @@ export default function EnquiryForm() {
       </div>
 
       <div>
+        <label className={LABEL} htmlFor="phone">
+          Phone
+        </label>
+        <input
+          className={fieldClass(Boolean(errors.phone))}
+          id="phone"
+          name="phone"
+          type="tel"
+          autoComplete="tel"
+          placeholder={enquiryCopy.placeholders.phone}
+          aria-invalid={Boolean(errors.phone)}
+          aria-describedby={errors.phone ? "phone-error" : undefined}
+        />
+        {errors.phone && (
+          <p id="phone-error" className="mt-2 text-[0.85rem]">
+            {errors.phone}
+          </p>
+        )}
+      </div>
+
+      <div>
         <label className={LABEL} htmlFor="projectType">
           The project
         </label>
@@ -140,10 +136,8 @@ export default function EnquiryForm() {
           name="projectType"
           defaultValue=""
         >
-          <option value="" disabled>
-            Select one
-          </option>
-          {PROJECT_TYPES.map((t) => (
+          <option value="">Select one — optional</option>
+          {enquiryCopy.projectTypes.map((t) => (
             <option key={t} value={t}>
               {t}
             </option>
@@ -160,7 +154,7 @@ export default function EnquiryForm() {
           id="location"
           name="location"
           type="text"
-          placeholder="Where it is"
+          placeholder={enquiryCopy.placeholders.location}
         />
       </div>
 
@@ -174,10 +168,8 @@ export default function EnquiryForm() {
           name="stage"
           defaultValue=""
         >
-          <option value="" disabled>
-            Select one
-          </option>
-          {STAGES.map((s) => (
+          <option value="">Select one — optional</option>
+          {enquiryCopy.stages.map((s) => (
             <option key={s} value={s}>
               {s}
             </option>
@@ -194,20 +186,20 @@ export default function EnquiryForm() {
           id="timeline"
           name="timeline"
           type="text"
-          placeholder="On site by, open by"
+          placeholder={enquiryCopy.placeholders.timeline}
         />
       </div>
 
       <div className="sm:col-span-2">
         <label className={LABEL} htmlFor="message">
-          Anything else
+          Message
         </label>
         <textarea
           className={`${fieldClass(Boolean(errors.message))} min-h-[9rem] resize-y`}
           id="message"
           name="message"
           required
-          placeholder="A sentence or two is enough."
+          placeholder={enquiryCopy.placeholders.message}
           aria-invalid={Boolean(errors.message)}
           aria-describedby={errors.message ? "message-error" : undefined}
         />
@@ -225,10 +217,10 @@ export default function EnquiryForm() {
         >
           {state.message}{" "}
           <a
-            href={`mailto:${siteSettings.email}?subject=${encodeURIComponent("Project enquiry")}`}
+            href={mailtoHref(site.email, "Project enquiry")}
             className="underline decoration-[var(--color-gold)] underline-offset-4"
           >
-            {siteSettings.email}
+            {site.email}
           </a>
         </p>
       )}
@@ -239,7 +231,7 @@ export default function EnquiryForm() {
           disabled={pending}
           className="group border border-[var(--color-ink)] px-7 py-3 text-[0.95rem] font-medium transition-colors hover:bg-[var(--color-ink)] hover:text-[var(--color-paper)] disabled:opacity-50"
         >
-          {pending ? "Sending…" : "Send enquiry"}
+          {pending ? enquiryCopy.pending : enquiryCopy.submit}
           <span className="ml-1 inline-block transition-transform group-hover:translate-x-1">
             →
           </span>

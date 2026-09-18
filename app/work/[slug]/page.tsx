@@ -8,11 +8,18 @@ import SectionIndex from "@/components/section-index";
 import { ProjectJsonLd } from "@/components/json-ld";
 import Reveal from "@/components/reveal";
 import dims from "@/content/image-dimensions.json";
-import { SECTOR_LABELS, projects, projectBySlug } from "@/content/seed";
+import { projects, projectBySlug, workCopy } from "@/content";
+import {
+  isPlaceholderProject,
+  locationLine,
+  projectCoverFile,
+  projectCoverSrc,
+  projectImageSrc,
+  projectTypologyLabel,
+} from "@/lib/project";
 
 const DIMS = dims as Record<string, number[]>;
 
-/** Every project is known at build time; anything else is a real 404. */
 export const dynamicParams = false;
 
 export function generateStaticParams() {
@@ -28,7 +35,7 @@ export async function generateMetadata({
   const project = projectBySlug(slug);
   if (!project) return {};
 
-  const cover = project.heroImage ?? project.gallery[0]?.file;
+  const cover = projectCoverFile(project);
   const wh = cover ? DIMS[cover] : undefined;
 
   return {
@@ -43,7 +50,7 @@ export async function generateMetadata({
       images: cover
         ? [
             {
-              url: `/images/${cover}`,
+              url: projectImageSrc(cover),
               width: wh?.[0],
               height: wh?.[1],
               alt: project.title,
@@ -54,13 +61,6 @@ export async function generateMetadata({
   };
 }
 
-/**
- * Case study (Build prompt §3.3). The narrative runs brief → constraint →
- * move → outcome, which is the shape of an architectural argument: what was
- * asked, what made it hard, what was done about it, what it became. Optional
- * fields simply drop out, so the thinner legacy entries degrade to a brief
- * and a gallery rather than rendering empty headings.
- */
 const NARRATIVE = [
   { key: "constraint", label: "The constraint" },
   { key: "move", label: "The move" },
@@ -76,9 +76,10 @@ export default async function CaseStudy({
   const project = projectBySlug(slug);
   if (!project) notFound();
 
-  const cover = project.heroImage ?? project.gallery[0]?.file;
-  // the cover already leads the page — don't show it twice in the plates
-  const plates = project.gallery.filter((g) => g.file !== cover);
+  const coverFile = projectCoverFile(project);
+  const coverSrc = projectCoverSrc(project);
+  const plates = project.gallery.filter((g) => g.file !== coverFile);
+  const demo = isPlaceholderProject(project);
 
   const byOrder = [...projects].sort((a, b) => a.order - b.order);
   const idx = byOrder.findIndex((p) => p.slug === project.slug);
@@ -88,7 +89,6 @@ export default async function CaseStudy({
     <article>
       <ProjectJsonLd project={project} />
 
-      {/* title block */}
       <header className="gutter mx-auto max-w-[90rem] pt-32 md:pt-44">
         <Link
           href="/work"
@@ -99,17 +99,21 @@ export default async function CaseStudy({
           </span>
           Work
         </Link>
-        <p className="kicker mt-8 mb-4">
-          {SECTOR_LABELS[project.sector]} · {project.location}, {project.country}
+        {demo && (
+          <p className="caption mt-8 !tracking-[0.14em] text-[var(--color-gold-deep)]">
+            {workCopy.placeholderLabel}
+          </p>
+        )}
+        <p className={`kicker mb-4 ${demo ? "mt-3" : "mt-8"}`}>
+          {projectTypologyLabel(project)} · {locationLine(project)}
         </p>
         <h1 className="h-display max-w-[20ch]">{project.title}</h1>
       </header>
 
-      {/* cover */}
-      {cover && (
+      {coverSrc && (
         <div className="gutter mx-auto mt-12 max-w-[90rem] md:mt-16">
           <CinematicImage
-            src={`/images/${cover}`}
+            src={coverSrc}
             alt={project.title}
             aspect="16 / 9"
             priority
@@ -119,14 +123,12 @@ export default async function CaseStudy({
         </div>
       )}
 
-      {/* specification */}
       <section className="gutter mx-auto max-w-[90rem] py-16 md:py-24">
         <Reveal>
           <SpecBlock project={project} />
         </Reveal>
       </section>
 
-      {/* narrative */}
       <section className="bg-[var(--color-paper-2)]">
         <div className="gutter mx-auto max-w-[90rem] py-20 md:py-28">
           <SectionIndex number="01" label="The project" />
@@ -158,18 +160,16 @@ export default async function CaseStudy({
             </Reveal>
           )}
 
-          {!project.underCreatech && (
+          {!project.underCreatech && !demo && (
             <Reveal index={2}>
               <p className="caption mt-14 max-w-[62ch] !normal-case !tracking-normal">
-                Delivered by Anvi Shah as {project.role} with a previous
-                practice, before founding Createch Architects.
+                {workCopy.priorPractice.replace("{role}", project.role)}
               </p>
             </Reveal>
           )}
         </div>
       </section>
 
-      {/* plates */}
       {plates.length > 0 && (
         <section className="gutter mx-auto max-w-[90rem] py-20 md:py-28">
           <SectionIndex number="02" label="Images" />
@@ -177,18 +177,19 @@ export default async function CaseStudy({
         </section>
       )}
 
-      {/* next */}
-      <section className="gutter mx-auto max-w-[90rem] border-t border-[var(--color-line)] py-16 md:py-20">
-        <p className="caption">Next project</p>
-        <Link href={`/work/${next.slug}`} className="group mt-3 inline-block">
-          <span className="h2 font-serif transition-colors group-hover:text-[var(--color-gold-deep)]">
-            {next.title}
-          </span>
-          <span className="ml-3 inline-block transition-transform group-hover:translate-x-1">
-            →
-          </span>
-        </Link>
-      </section>
+      {next && next.slug !== project.slug && (
+        <section className="gutter mx-auto max-w-[90rem] border-t border-[var(--color-line)] py-16 md:py-20">
+          <p className="caption">{workCopy.next}</p>
+          <Link href={`/work/${next.slug}`} className="group mt-3 inline-block">
+            <span className="h2 font-serif transition-colors group-hover:text-[var(--color-gold-deep)]">
+              {next.title}
+            </span>
+            <span className="ml-3 inline-block transition-transform group-hover:translate-x-1">
+              →
+            </span>
+          </Link>
+        </section>
+      )}
     </article>
   );
 }

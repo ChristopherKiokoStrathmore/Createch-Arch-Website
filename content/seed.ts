@@ -1,11 +1,11 @@
-// content/seed.ts — Build prompt §4. Single source of truth for content.
-// Imported by scripts/import-content.mjs (Phase 4) into Sanity, and used
-// directly by pages until CMS wiring lands.
+// content/seed.ts — case studies. Site copy lives in content/copy.ts.
 //
-// Gallery `file` values are paths under assets-web/ (see scripts/prepare-images.mjs).
-// Attribution integrity (§0): only Networks Padel Village is underCreatech.
+// Image files: public/images/{slug}/{name}.jpg (committed). Build emits
+// .webp variants beside them. Attribution: only Networks Padel Village is
+// underCreatech. Do not set that flag to inflate the portfolio. Do not add
+// invented buildings; a placeholder entry must set `placeholder: true`.
 
-export type Sector =
+export type Typology =
   | "hospitality"
   | "retail-mixed-use"
   | "healthcare"
@@ -13,18 +13,28 @@ export type Sector =
   | "workplace"
   | "fnb-interiors";
 
+/** @deprecated Prefer Typology. */
+export type Sector = Typology;
+
 export type GalleryImage = {
-  file: string; // path under assets-web/, shaped {slug}/{name}.jpg
+  file: string; // relative to public/images/
   alt: string;
   caption?: string;
 };
 
+/**
+ * CMS-ready project shape.
+ *
+ * Required listing fields: slug, title, location, typology, cover, gallery,
+ * description (via `brief`). `year` is optional — omit rather than guess.
+ * `placeholder: true` marks a demo plate, never a claimed Createch building.
+ */
 export type Project = {
   slug: string;
   title: string;
   featured: boolean;
   order: number;
-  sector: Sector;
+  typology: Typology;
   location: string;
   country: string;
   areaSqm?: number;
@@ -32,17 +42,23 @@ export type Project = {
   year?: number;
   role: string;
   underCreatech: boolean;
+  /** Short description for cards, featured work, and the case-study lead. */
   brief: string;
+  /** Optional even-shorter listing line; falls back to `brief`. */
+  description?: string;
   constraint?: string;
   move?: string;
   outcome?: string;
   accolade?: string;
   seoDescription: string;
-  heroImage?: string; // path under assets-web/ — set for legacy after curation
+  /** Cover photograph — path under public/images/. */
+  cover?: string;
   gallery: GalleryImage[];
+  /** Demo/example entry. Must never look like delivered Createch work. */
+  placeholder?: boolean;
 };
 
-export const SECTOR_LABELS: Record<Sector, string> = {
+export const TYPOLOGY_LABELS: Record<Typology, string> = {
   hospitality: "Hospitality",
   "retail-mixed-use": "Retail & Mixed-Use",
   healthcare: "Healthcare",
@@ -51,36 +67,8 @@ export const SECTOR_LABELS: Record<Sector, string> = {
   "fnb-interiors": "F&B Interiors",
 };
 
-export const siteSettings = {
-  email: "anvi@createch.co.ke",
-  phone: "+254 733 622 848",
-  whatsapp: "254733622848",
-  location: "Nairobi, Kenya",
-  tagline: "Hospitality | Architecture | Interior Design",
-  showTeam: false,
-  socials: { instagram: "", linkedin: "" },
-};
-
-export const studioPhilosophy =
-  "Createch Architects is a Nairobi-based design practice specializing in architecture and interior design for hospitality, food and beverage, lifestyle spaces and high-end residential projects. We believe successful hospitality design goes beyond aesthetics: it shapes guest experience, operational efficiency, brand identity and commercial performance. Our approach is rooted in contextual sensitivity, functionality and storytelling. From concept development through technical detailing and project coordination, we work closely with clients and consultants to deliver design aligned with operational and business objectives, with careful attention to detail, scale, lighting, circulation and user experience.";
-
-export const anviBio =
-  "Createch was founded by Anvi Shah, an architect and interior designer with over sixteen years of experience across hospitality, retail, commercial, residential and mixed-use projects in Kenya, India, East and West Africa. Her background includes leading hospitality and lifestyle projects for clients such as Grumeti Reserves, Tanzania and Village Market, Kenya, with earlier roles at Les Harbottle Designs, Symbion Kenya, Somaya & Kalappa Consultants and Phoenix Marketcity. She brings expertise in concept development, spatial planning, technical detailing, consultant coordination and end-user experience, ensuring each project is thoughtfully designed, operationally efficient and brand-aligned.";
-
-export const anviCredentials = [
-  "B.Arch, Sir J.J. College of Architecture, Mumbai",
-  "MSc Environmental Design of Buildings, Cardiff University",
-  "BORAQS-certified Architect, Kenya",
-  "Registered Architect, Council of Architecture, India",
-  "EDGE Expert, IFC World Bank Group",
-];
-
-export const services = [
-  { title: "Architecture", description: "Concept to construction across hospitality, retail and residential." },
-  { title: "Interior Design", description: "Guest-experience-led interiors resolved to the minute detail." },
-  { title: "Landscape Integration", description: "Landscape as connective tissue between arrival, building and place." },
-  { title: "Concept-to-Handover Delivery", description: "Consultant coordination and site delivery from first line to handover." },
-];
+/** @deprecated Prefer TYPOLOGY_LABELS. */
+export const SECTOR_LABELS = TYPOLOGY_LABELS;
 
 export const projects: Project[] = [
   {
@@ -88,7 +76,7 @@ export const projects: Project[] = [
     title: "Networks Padel Village & Vamos Restaurant",
     featured: true,
     order: 1,
-    sector: "hospitality",
+    typology: "hospitality",
     location: "Nairobi",
     country: "Kenya",
     areaSqm: 3400,
@@ -105,7 +93,7 @@ export const projects: Project[] = [
       "Delivered from inception to handover as the practice's flagship: a complete sport, food and beverage destination now operating in Nairobi.",
     seoDescription:
       "Networks Padel Village and Vamos Restaurant, Nairobi — a greenfield sport and social destination by Createch Architects, delivered from inception to handover.",
-    heroImage: "networks-padel-village/CED_3747.jpg",
+    cover: "networks-padel-village/CED_3747.jpg",
     gallery: [
       { file: "networks-padel-village/CED_3790.jpg", alt: "The social lounge under a patterned hexagonal canopy, opening to the pool." },
       { file: "networks-padel-village/CED_3743.jpg", alt: "Detail of a padel court net against the blue playing surface." },
@@ -127,7 +115,7 @@ export const projects: Project[] = [
     title: "Le Méridien, Bwejuu",
     featured: false,
     order: 2,
-    sector: "hospitality",
+    typology: "hospitality",
     location: "Bwejuu, Zanzibar",
     country: "Tanzania",
     areaSqm: 10000,
@@ -144,7 +132,7 @@ export const projects: Project[] = [
       "Led from concept through construction documentation with ongoing site supervision and coordination.",
     seoDescription:
       "Le Méridien Bwejuu, Zanzibar — a 75-key beach resort led from concept to construction documentation.",
-    heroImage: "le-meridien-zanzibar/Le_Meridien_Concept_Restaurant_01.jpg",
+    cover: "le-meridien-zanzibar/Le_Meridien_Concept_Restaurant_01.jpg",
     gallery: [
       { file: "le-meridien-zanzibar/Le_Meridien_Concept_Restaurant_01.jpg", alt: "Concept render of the Le Méridien specialty restaurant opening to the coast." },
       { file: "le-meridien-zanzibar/Le_Meridien_Concept_Restaurant_03.jpg", alt: "Restaurant concept with layered timber ceiling and sea views." },
@@ -159,7 +147,7 @@ export const projects: Project[] = [
     title: "Radisson Collection Hotel",
     featured: false,
     order: 3,
-    sector: "hospitality",
+    typology: "hospitality",
     location: "Abuja",
     country: "Nigeria",
     areaSqm: 55000,
@@ -176,7 +164,7 @@ export const projects: Project[] = [
       "Concept to construction documentation as project lead; design coordination meetings, operations liaison and site coordination ongoing.",
     seoDescription:
       "Radisson Collection Hotel, Abuja — a 259-key flagship whose elevations carry its identity, led from concept to construction documentation.",
-    heroImage: "radisson-collection-abuja/Radisson_Abuja_Concept_03.jpg",
+    cover: "radisson-collection-abuja/Radisson_Abuja_Concept_03.jpg",
     gallery: [
       { file: "radisson-collection-abuja/Radisson_Abuja_Concept_03.jpg", alt: "Concept elevation of the Radisson Collection flagship tower, Abuja." },
       { file: "radisson-collection-abuja/Radisson_Abuja_Concept_02.jpg", alt: "Concept render of the hotel podium and entrance." },
@@ -191,7 +179,7 @@ export const projects: Project[] = [
     title: "Tribe Boutique Hotel, Refurbishment",
     featured: false,
     order: 4,
-    sector: "hospitality",
+    typology: "hospitality",
     location: "Nairobi",
     country: "Kenya",
     areaSqm: 8800,
@@ -208,7 +196,7 @@ export const projects: Project[] = [
       "Full project cycle from design to handover of a renewed Tribe.",
     seoDescription:
       "Tribe Boutique Hotel, Nairobi — a full refurbishment of a live 137-room hotel, delivered from design to handover.",
-    heroImage: "tribe-hotel-nairobi/Tribe_Public_Areas_02.jpg",
+    cover: "tribe-hotel-nairobi/Tribe_Public_Areas_02.jpg",
     gallery: [
       { file: "tribe-hotel-nairobi/Tribe_Public_Areas_02.jpg", alt: "Refurbished public area at Tribe Boutique Hotel." },
       { file: "tribe-hotel-nairobi/Tribe_Hotel_Rooms_01.jpg", alt: "Guest room after refurbishment." },
@@ -224,7 +212,7 @@ export const projects: Project[] = [
     title: "Kwetu, Hilton Curio Collection",
     featured: false,
     order: 5,
-    sector: "hospitality",
+    typology: "hospitality",
     location: "Peponi Road, Nairobi",
     country: "Kenya",
     teamSize: 2,
@@ -240,7 +228,7 @@ export const projects: Project[] = [
       "Design, production and execution through construction, changes incorporated while building continued.",
     seoDescription:
       "Kwetu, Hilton Curio Collection, Nairobi — a 125-key hotel redesigned within an existing built frame.",
-    heroImage: "kwetu-hilton-curio/Kwetu_Concept_Pool_03.jpg",
+    cover: "kwetu-hilton-curio/Kwetu_Concept_Pool_03.jpg",
     gallery: [
       { file: "kwetu-hilton-curio/Kwetu_Concept_Pool_03.jpg", alt: "Concept render of the Kwetu pool terrace on its contoured site." },
       { file: "kwetu-hilton-curio/Kwetu_Concept_Pool_01.jpg", alt: "Pool and deck concept for the Hilton Curio hotel." },
@@ -255,7 +243,7 @@ export const projects: Project[] = [
     title: "Village Market Extension & Trademark Hotel",
     featured: false,
     order: 6,
-    sector: "retail-mixed-use",
+    typology: "retail-mixed-use",
     location: "Nairobi",
     country: "Kenya",
     areaSqm: 86000,
@@ -273,7 +261,7 @@ export const projects: Project[] = [
     accolade: "Token of appreciation from the client at the opening ceremony.",
     seoDescription:
       "Village Market Extension & Trademark Hotel, Nairobi — an 86,000 m² retail and hospitality destination threaded into a landmark trading centre.",
-    heroImage: "village-market-trademark/Village_Market_Ext_Courtyard_03.jpg",
+    cover: "village-market-trademark/Village_Market_Ext_Courtyard_03.jpg",
     gallery: [
       { file: "village-market-trademark/Village_Market_Ext_Courtyard_03.jpg", alt: "External courtyard linking the Village Market extension to the existing centre." },
       { file: "village-market-trademark/Village_Market_Ext_Courtyard_04.jpg", alt: "Courtyard and internal street of the extended destination." },
@@ -290,7 +278,7 @@ export const projects: Project[] = [
     title: "Kilima Lodge, Private House",
     featured: false,
     order: 7,
-    sector: "residential",
+    typology: "residential",
     location: "Grumeti Reserves, Serengeti",
     country: "Tanzania",
     areaSqm: 1700,
@@ -308,7 +296,7 @@ export const projects: Project[] = [
     accolade: "Letter of appreciation from the developer for effort and dedication to the project.",
     seoDescription:
       "Kilima Lodge, Grumeti Reserves, Serengeti — a private lodge coordinated across ten time zones from design development to completion.",
-    heroImage: "kilima-lodge-serengeti/Kilima_Green_Roofs_01.jpg",
+    cover: "kilima-lodge-serengeti/Kilima_Green_Roofs_01.jpg",
     gallery: [
       { file: "kilima-lodge-serengeti/Kilima_Green_Roofs_01.jpg", alt: "Green roofs of Kilima Lodge settling into the Serengeti plains." },
       { file: "kilima-lodge-serengeti/Kilima_Vip_Suite_01.jpg", alt: "VIP suite overlooking the plains." },
@@ -323,7 +311,7 @@ export const projects: Project[] = [
     title: "Aga Khan Children's Specialty Hospital",
     featured: false,
     order: 8,
-    sector: "healthcare",
+    typology: "healthcare",
     location: "Nairobi",
     country: "Kenya",
     areaSqm: 7500,
@@ -340,7 +328,7 @@ export const projects: Project[] = [
       "Scheme design to detail design under international health facility guidelines.",
     seoDescription:
       "Aga Khan Children's Specialty Hospital, Nairobi — a G+4 vertical extension turning code-driven healthcare space into a children's world through Tinga Tinga interiors.",
-    heroImage: "aga-khan-childrens-hospital/Aga_Khan_Concept_01.jpg",
+    cover: "aga-khan-childrens-hospital/Aga_Khan_Concept_01.jpg",
     gallery: [
       { file: "aga-khan-childrens-hospital/Aga_Khan_Concept_01.jpg", alt: "Concept render of the children's hospital with a Tinga Tinga exterior mural." },
       { file: "aga-khan-childrens-hospital/Aga_Khan_Concept_02.jpg", alt: "Ward concept carrying animal characters from the Tinga Tinga tales." },
@@ -354,7 +342,7 @@ export const projects: Project[] = [
     title: "Orion Park Office Building, Phoenix Marketcity",
     featured: false,
     order: 9,
-    sector: "workplace",
+    typology: "workplace",
     location: "Mumbai",
     country: "India",
     role: "Architect",
@@ -363,7 +351,7 @@ export const projects: Project[] = [
       "Office development within the Phoenix Marketcity estate.",
     seoDescription:
       "Orion Park Office Building, Phoenix Marketcity, Mumbai — an office development by the practice.",
-    heroImage: "orion-park-mumbai/Orion_Park_Mumbai_02.jpg",
+    cover: "orion-park-mumbai/Orion_Park_Mumbai_02.jpg",
     gallery: [
       { file: "orion-park-mumbai/Orion_Park_Mumbai_02.jpg", alt: "Elevation of the Orion Park office building at Phoenix Marketcity." },
       { file: "orion-park-mumbai/Orion_Park_Mumbai_04.jpg", alt: "View of the office development within the estate." },
@@ -375,7 +363,7 @@ export const projects: Project[] = [
     title: "Club Mahindra Holiday Resort",
     featured: false,
     order: 10,
-    sector: "hospitality",
+    typology: "hospitality",
     location: "Theog, Himachal Pradesh",
     country: "India",
     role: "Architect",
@@ -384,7 +372,7 @@ export const projects: Project[] = [
       "Himalayan holiday resort for Club Mahindra at Theog.",
     seoDescription:
       "Club Mahindra Holiday Resort, Theog, Himachal Pradesh — a Himalayan holiday resort.",
-    heroImage: "club-mahindra-theog/Club_Mahindra_Himachal_07.jpg",
+    cover: "club-mahindra-theog/Club_Mahindra_Himachal_07.jpg",
     gallery: [
       { file: "club-mahindra-theog/Club_Mahindra_Himachal_07.jpg", alt: "The Club Mahindra resort stepping down the Himalayan hillside at Theog." },
       { file: "club-mahindra-theog/Club_Mahindra_Himachal_03.jpg", alt: "Resort blocks set into the mountain slope." },
@@ -397,7 +385,7 @@ export const projects: Project[] = [
     title: "Indian Restaurant, Interiors",
     featured: false,
     order: 11,
-    sector: "fnb-interiors",
+    typology: "fnb-interiors",
     location: "Mumbai",
     country: "India",
     role: "Interior Designer",
@@ -412,7 +400,7 @@ export const projects: Project[] = [
       "A rooted, rustic-material fine-dining room where craft carries the brand.",
     seoDescription:
       "Indian Restaurant interiors, Mumbai — a fine-dining room built around the lotus, in Jaisalmer stone, brass and laser-cut screens.",
-    heroImage: "indian-restaurant-mumbai/Indian_Restaurant_Mumbai_01.jpg",
+    cover: "indian-restaurant-mumbai/Indian_Restaurant_Mumbai_01.jpg",
     gallery: [
       { file: "indian-restaurant-mumbai/Indian_Restaurant_Mumbai_01.jpg", alt: "Laser-cut lotus-petal screen and Jaisalmer stone in the fine-dining room." },
       { file: "indian-restaurant-mumbai/Indian_Restaurant_Mumbai_02.jpg", alt: "Backlit gold laser-cut ceiling panels and Sanskrit verses on red." },

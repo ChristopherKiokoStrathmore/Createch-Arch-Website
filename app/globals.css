@@ -133,10 +133,10 @@ body {
 /* Slow Ken-Burns drift — gives stills cinematic life. Off when reduced. */
 @keyframes kenburns {
   from {
-    transform: scale(1.03);
+    transform: scale(1.02);
   }
   to {
-    transform: scale(1.12);
+    transform: scale(1.06);
   }
 }
 .kenburns {
