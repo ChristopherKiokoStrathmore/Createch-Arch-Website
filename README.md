@@ -91,6 +91,10 @@ variant. **The widths in that file, in `next.config.ts` (`deviceSizes`) and in
 `scripts/build-image-variants.mjs` must stay in sync** — the loader can only
 address files the script actually wrote.
 
+The official mark lives in **`public/brand/`** (`createch-logo.png` plus webp
+sizes). `npm run brand:logo` regenerates web sizes, `app/icon.png`,
+`app/apple-icon.png` and `og.jpg` from that PNG. Do not redraw it.
+
 ---
 
 ## Deploying
@@ -154,10 +158,7 @@ and uninstall `@vercel/analytics` and `@vercel/speed-insights`.
 
 These are content and brand decisions, not code:
 
-- **The logo is a placeholder.** `components/logo.tsx` says so in its own header
-  comment. It also drives `app/icon.svg`, `app/apple-icon.png` and `og.jpg`
-  (via `scripts/build-og-image.mjs`) — replace all four when the real SVG lands.
-- **No social URLs.** `siteSettings.socials` is empty, so the footer renders no
+- **No social URLs.** `site.socials` is empty, so the footer renders no
   social links at all. Fill them in and they appear.
 - **No project years.** No entry in `content/seed.ts` sets `year`, so the Year
   cell in `SpecBlock` and `ProjectCard` never renders. Undated work reads as

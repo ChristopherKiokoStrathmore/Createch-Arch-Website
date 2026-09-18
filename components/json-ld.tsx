@@ -35,6 +35,7 @@ const ORGANIZATION = {
   url: BASE,
   email: site.email,
   telephone: site.phone,
+  logo: `${BASE}/brand/createch-logo.png`,
   description:
     "Nairobi-based architecture and interior design practice for hospitality, food and beverage, lifestyle spaces and high-end residential projects.",
   address: {
@@ -71,6 +72,7 @@ export function OrganizationJsonLd() {
             parentOrganization: { "@id": `${BASE}/#organization` },
             email: site.email,
             telephone: site.phone,
+            logo: `${BASE}/brand/createch-logo.png`,
             address: {
               "@type": "PostalAddress",
               addressLocality: "Nairobi",
