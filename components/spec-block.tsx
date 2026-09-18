@@ -1,20 +1,20 @@
-import { SECTOR_LABELS, type Project } from "@/content/seed";
+import type { Project } from "@/content";
+import { locationLine, projectTypologyLabel } from "@/lib/project";
 
 /**
- * Spec block (Build prompt §3.3): dimension captions in a 2×3 grid —
- * Location, Area, Role, Team, Sector, Status/Year. Omitted fields
- * simply don't render a cell.
+ * Spec block: Location, Area, Role, Team, Typology, Year.
+ * Omitted fields simply don't render a cell.
  */
 export default function SpecBlock({ project }: { project: Project }) {
   const cells: { label: string; value: string }[] = [
-    { label: "Location", value: `${project.location}, ${project.country}` },
+    { label: "Location", value: locationLine(project) },
   ];
   if (project.areaSqm)
     cells.push({ label: "Area", value: `${project.areaSqm.toLocaleString()} m²` });
   cells.push({ label: "Role", value: project.role });
   if (project.teamSize)
     cells.push({ label: "Team", value: `Team of ${project.teamSize}` });
-  cells.push({ label: "Sector", value: SECTOR_LABELS[project.sector] });
+  cells.push({ label: "Typology", value: projectTypologyLabel(project) });
   if (project.year)
     cells.push({ label: "Year", value: String(project.year) });
 

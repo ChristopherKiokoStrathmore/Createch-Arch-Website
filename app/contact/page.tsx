@@ -3,80 +3,93 @@ import PageHeader from "@/components/page-header";
 import SectionIndex from "@/components/section-index";
 import Reveal from "@/components/reveal";
 import EnquiryForm from "@/components/enquiry-form";
-import { siteSettings } from "@/content/seed";
+import {
+  contactCopy,
+  locationLabel,
+  mailtoHref,
+  site,
+  streetAddress,
+  telHref,
+  waHref,
+} from "@/content";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description:
-    "Talk to Createch Architects about a hotel, restaurant, lodge, retail or residential project. Based in Nairobi, working across East and West Africa and India.",
+  description: contactCopy.metaDescription,
   alternates: { canonical: "/contact" },
   openGraph: {
     title: "Contact · Createch Architects",
-    description:
-      "Talk to Createch Architects about a hotel, restaurant, lodge, retail or residential project.",
+    description: contactCopy.metaDescription,
     url: "/contact",
     type: "website",
   },
 };
 
 /**
- * Contact (Build prompt §3.5). Direct channels first, then the enquiry form.
- *
- * WhatsApp stays above the form: for this market it is the channel clients
- * actually use, and burying it behind a form would cost enquiries.
+ * Contact. Direct channels first (WhatsApp stays above the form), then the
+ * enquiry. Street address only renders when `site.address.line1` is set —
+ * we do not invent one.
  */
-const CHANNELS = [
-  {
-    label: "Email",
-    value: siteSettings.email,
-    href: `mailto:${siteSettings.email}`,
-    external: false,
-  },
-  {
-    label: "WhatsApp",
-    value: siteSettings.phone,
-    href: `https://wa.me/${siteSettings.whatsapp}`,
-    external: true,
-  },
-  {
-    label: "Telephone",
-    value: siteSettings.phone,
-    href: `tel:${siteSettings.phone.replace(/\s/g, "")}`,
-    external: false,
-  },
-];
+function channels() {
+  const list: {
+    label: string;
+    value: string;
+    href: string;
+    external: boolean;
+  }[] = [];
 
-const BRIEF_PROMPTS = [
-  {
-    label: "The project",
-    body: "Type and scale — a hotel, a restaurant, a lodge, a retail floor, a house. Rooms, covers or square metres if you know them.",
-  },
-  {
-    label: "The site",
-    body: "Where it is, and whether it is greenfield, a conversion or a refurbishment of something operating.",
-  },
-  {
-    label: "The stage",
-    body: "Feasibility, concept, an existing scheme that needs resolving, or drawings ready for site.",
-  },
-  {
-    label: "The dates",
-    body: "When you need to be on site, and when the doors are meant to open.",
-  },
-];
+  if (site.email) {
+    list.push({
+      label: "Email",
+      value: site.email,
+      href: mailtoHref(site.email),
+      external: false,
+    });
+  }
+  if (site.whatsapp) {
+    list.push({
+      label: "WhatsApp",
+      value: site.phone,
+      href: waHref(site.whatsapp),
+      external: true,
+    });
+  }
+  if (site.phone) {
+    list.push({
+      label: "Telephone",
+      value: site.phone,
+      href: telHref(site.phone),
+      external: false,
+    });
+  }
+  const street = streetAddress();
+  if (street) {
+    list.push({
+      label: "Address",
+      value: `${street}, ${locationLabel()}`,
+      href: "#",
+      external: false,
+    });
+  }
+  return list;
+}
 
 export default function Contact() {
+  const CHANNELS = channels();
+
   return (
     <>
       <PageHeader
-        eyebrow="Contact"
-        title="Tell us about your project."
-        lede="Createch works from concept through technical detailing to handover, in Nairobi and across the region. New enquiries go straight to Anvi."
+        eyebrow={contactCopy.eyebrow}
+        title={contactCopy.title}
+        lede={contactCopy.lede}
       />
 
-      {/* 01 — direct channels */}
       <section className="gutter mx-auto max-w-[90rem] py-20 md:py-28">
-        <SectionIndex number="01" label="Direct" />
+        <SectionIndex
+          number={contactCopy.direct.number}
+          label={contactCopy.direct.label}
+        />
         <ul className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
           {CHANNELS.map((c, i) => (
             <Reveal
@@ -88,45 +101,52 @@ export default function Contact() {
               <p className="caption !tracking-[0.14em] text-[var(--color-gold-deep)]">
                 {c.label}
               </p>
-              <a
-                href={c.href}
-                {...(c.external
-                  ? { target: "_blank", rel: "noopener noreferrer" }
-                  : {})}
-                className="group mt-2 inline-block font-serif text-[1.25rem] md:text-[1.5rem]"
-              >
-                {c.value}
-                <span className="block h-px w-0 bg-[var(--color-gold)] transition-all duration-200 group-hover:w-full" />
-              </a>
+              {c.href === "#" ? (
+                <p className="mt-2 font-serif text-[1.25rem] md:text-[1.5rem]">
+                  {c.value}
+                </p>
+              ) : (
+                <a
+                  href={c.href}
+                  {...(c.external
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
+                  className="group mt-2 inline-block font-serif text-[1.25rem] md:text-[1.5rem]"
+                >
+                  {c.value}
+                  <span className="block h-px w-0 bg-[var(--color-gold)] transition-all duration-200 group-hover:w-full" />
+                </a>
+              )}
             </Reveal>
           ))}
         </ul>
 
         <Reveal index={1}>
           <p className="caption mt-14 !tracking-[0.12em]">
-            Studio · {siteSettings.location}
+            {contactCopy.studioLabel} · {site.location}
           </p>
         </Reveal>
       </section>
 
-      {/* 02 — the brief, and the form that collects it */}
       <section className="bg-[var(--color-paper-2)]">
         <div className="gutter mx-auto max-w-[90rem] py-20 md:py-28">
-          <SectionIndex number="02" label="Your brief" />
+          <SectionIndex
+            number={contactCopy.brief.number}
+            label={contactCopy.brief.label}
+          />
           <div className="grid gap-x-12 gap-y-14 md:grid-cols-12">
             <div className="md:col-span-5">
               <Reveal>
                 <p className="h2 max-w-[18ch] font-serif">
-                  Four things that get you a useful first reply.
+                  {contactCopy.brief.headline}
                 </p>
                 <p className="mt-6 max-w-[44ch] text-[var(--color-ink-60)]">
-                  None of it has to be resolved. A sentence on each is enough to
-                  come back to you with something worth reading.
+                  {contactCopy.brief.lede}
                 </p>
               </Reveal>
 
               <dl className="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2 md:grid-cols-1">
-                {BRIEF_PROMPTS.map((p, i) => (
+                {contactCopy.prompts.map((p, i) => (
                   <Reveal key={p.label} index={i}>
                     <dt className="caption !tracking-[0.14em] text-[var(--color-gold-deep)]">
                       {p.label}
@@ -145,14 +165,14 @@ export default function Contact() {
               </Reveal>
               <Reveal index={1}>
                 <p className="caption mt-8 max-w-[52ch] !normal-case !tracking-normal">
-                  Prefer email? Write to{" "}
+                  {contactCopy.preferEmail}{" "}
                   <a
-                    href={`mailto:${siteSettings.email}`}
+                    href={mailtoHref(site.email)}
                     className="text-[var(--color-ink)] underline decoration-[var(--color-gold)] underline-offset-4"
                   >
-                    {siteSettings.email}
+                    {site.email}
                   </a>{" "}
-                  — it reaches the same inbox.
+                  {contactCopy.preferEmailTail}
                 </p>
               </Reveal>
             </div>

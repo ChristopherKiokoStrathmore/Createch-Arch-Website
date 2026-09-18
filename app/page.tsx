@@ -6,17 +6,27 @@ import Founder from "@/components/founder";
 import BlueprintLines from "@/components/blueprint-lines";
 import SectionIndex from "@/components/section-index";
 import Reveal from "@/components/reveal";
-import { featuredProjects } from "@/content/seed";
-import { heroImage, heroAlt, heroPaths, heroViewBox } from "@/content/hero";
+import Principles from "@/components/principles";
+import Presence from "@/components/presence";
+import {
+  featuredProjects,
+  heroAlt,
+  heroCopy,
+  heroImage,
+  heroPaths,
+  heroViewBox,
+  homeCopy,
+  mailtoHref,
+  site,
+  waHref,
+} from "@/content";
 
 /**
- * Home — 4 sections (law #7): Hero, Featured Work, Studio (+ founder), Contact.
- * Light theme (law #6), seamless scroll (law #2), nothing locked to 100vh
- * (law #3). Premium / cinematic within the motion contract — no scroll-snap,
- * no WebGL. The "from line to built" motif runs as a through-line.
+ * Home — Hero, Featured Work, Studio (principles + presence + founder), Contact.
+ * Photos lead; copy from `@/content`. Original practice voice from the live
+ * site sits in the hero and the studio band — not SaaS slogans.
  */
 
-// abstract floor-plan lines for the through-line divider (draw on scroll)
 const PLAN_LINES = [
   "M 0 132 L 1200 132",
   "M 60 132 L 60 46 L 380 46 L 380 132",
@@ -27,64 +37,75 @@ const PLAN_LINES = [
 ];
 
 export default function Home() {
+  const { featured, studio, contact } = homeCopy;
+
   return (
     <>
-      {/* 01 — Hero */}
       <HeroLineReveal
         src={heroImage}
         alt={heroAlt}
         paths={heroPaths}
         viewBox={heroViewBox}
+        copy={heroCopy}
       />
 
-      {/* 02 — Featured Work */}
-      <section
-        id="featured-work"
-        className="gutter mx-auto max-w-[90rem] py-24 md:py-36"
-      >
-        <SectionIndex number="02" label="Selected Work" />
-        <FeaturedWork projects={featuredProjects} />
-      </section>
+      {featuredProjects.length > 0 && (
+        <section
+          id="featured-work"
+          className="gutter mx-auto max-w-[90rem] py-24 md:py-36"
+        >
+          <SectionIndex number={featured.number} label={featured.label} />
+          <FeaturedWork projects={featuredProjects} />
+        </section>
+      )}
 
-      {/* 03 — Studio + Founder */}
       <section className="bg-[var(--color-paper-2)]">
         <div className="gutter mx-auto max-w-[90rem] py-24 md:py-36">
-          <SectionIndex number="03" label="Studio" />
+          <SectionIndex number={studio.number} label={studio.label} />
           <Reveal>
-            <p className="h2 max-w-[24ch] font-serif">
-              We design for guest experience, operational efficiency and
-              commercial performance.
-            </p>
+            <p className="h2 max-w-[24ch] font-serif">{studio.headline}</p>
           </Reveal>
           <Reveal index={1}>
             <p className="mt-6 max-w-[60ch] text-[var(--color-ink-60)]">
-              Sixteen years across hotels, lodges, retail destinations and
-              residences, from concept to handover.
+              {studio.lede}
             </p>
           </Reveal>
 
           <Reveal index={2}>
             <ul className="caption mt-10 flex flex-wrap gap-x-4 gap-y-2 !tracking-[0.14em] text-[var(--color-ink)]">
-              <li>Hospitality</li>
-              <li aria-hidden="true" className="text-[var(--color-gold-deep)]">·</li>
-              <li>Architecture</li>
-              <li aria-hidden="true" className="text-[var(--color-gold-deep)]">·</li>
-              <li>Interior Design</li>
+              {studio.disciplines.flatMap((d, i) => [
+                i > 0 ? (
+                  <li
+                    key={`sep-${d}`}
+                    aria-hidden="true"
+                    className="text-[var(--color-gold-deep)]"
+                  >
+                    ·
+                  </li>
+                ) : null,
+                <li key={d}>{d}</li>,
+              ])}
             </ul>
           </Reveal>
 
-          <Reveal index={3} className="mt-14">
+          <div className="mt-16 md:mt-20">
+            <Principles />
+          </div>
+
+          <div className="mt-16 md:mt-24">
+            <Presence />
+          </div>
+
+          <Reveal index={2} className="mt-14">
             <FootprintStrip />
           </Reveal>
 
-          {/* line-to-built through-line divider */}
           <BlueprintLines
             paths={PLAN_LINES}
             viewBox="0 0 1200 170"
             className="mt-20 h-16 w-full opacity-90 md:h-24"
           />
 
-          {/* founder */}
           <div className="mt-16 md:mt-20">
             <Founder />
           </div>
@@ -94,7 +115,7 @@ export default function Home() {
               href="/studio"
               className="group mt-16 inline-block text-[0.95rem] font-medium"
             >
-              About the studio
+              {studio.aboutCta}
               <span className="ml-1 inline-block transition-transform group-hover:translate-x-1">
                 →
               </span>
@@ -103,28 +124,27 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 04 — Contact CTA */}
       <section className="gutter mx-auto max-w-[90rem] py-24 md:py-36">
-        <SectionIndex number="04" label="Contact" />
+        <SectionIndex number={contact.number} label={contact.label} />
         <Reveal>
-          <h2 className="h-display max-w-[14ch]">Tell us about your project.</h2>
+          <h2 className="h-display max-w-[14ch]">{contact.headline}</h2>
         </Reveal>
         <Reveal index={1}>
           <div className="mt-10 flex flex-col gap-3 text-[1.25rem] md:text-[1.5rem]">
             <a
-              href="mailto:anvi@createch.co.ke"
+              href={mailtoHref(site.email)}
               className="group w-fit font-serif"
             >
-              anvi@createch.co.ke
+              {site.email}
               <span className="block h-px w-0 bg-[var(--color-gold)] transition-all duration-200 group-hover:w-full" />
             </a>
             <a
-              href="https://wa.me/254733622848"
+              href={waHref(site.whatsapp)}
               target="_blank"
               rel="noopener noreferrer"
               className="group w-fit font-serif"
             >
-              WhatsApp +254 733 622 848
+              WhatsApp {site.phone}
               <span className="block h-px w-0 bg-[var(--color-gold)] transition-all duration-200 group-hover:w-full" />
             </a>
           </div>

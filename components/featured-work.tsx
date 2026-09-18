@@ -2,28 +2,44 @@ import Link from "next/link";
 import CinematicImage from "./cinematic-image";
 import DimensionCaption from "./dimension-caption";
 import Reveal from "./reveal";
-import { SECTOR_LABELS, type Project } from "@/content/seed";
+import { workCopy, type Project } from "@/content";
+import {
+  isPlaceholderProject,
+  locationLine,
+  projectCoverSrc,
+  projectDescription,
+  projectImageSrc,
+  projectTypologyLabel,
+} from "@/lib/project";
 
 /**
- * Featured work (§3.1 S2 + law #4): a large cinematic 8-col image with two
- * supporting images offset below, dimension caption, brief, and a link.
- * Accepts an ARRAY so a second featured project drops in with no layout change.
+ * Featured work: large cinematic frame, two supporting plates, brief.
+ * Empty/placeholder-aware so a missing cover never invents a building.
  */
 export default function FeaturedWork({ projects }: { projects: Project[] }) {
+  if (projects.length === 0) {
+    return (
+      <p className="max-w-[54ch] text-[var(--color-ink-60)]">
+        {workCopy.empty.lede}
+      </p>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-28 md:gap-44">
       {projects.map((project, i) => {
-        const hero = project.heroImage ?? project.gallery[0]?.file;
+        const hero = projectCoverSrc(project);
+        const coverFile = project.cover ?? project.gallery[0]?.file;
         const support = project.gallery
-          .filter((g) => g.file !== hero)
+          .filter((g) => g.file !== coverFile)
           .slice(0, 2);
+        const demo = isPlaceholderProject(project);
         return (
           <article key={project.slug} className="grid grid-cols-12 gap-x-6 gap-y-8">
-            {/* large cinematic image — 8 cols */}
             <Reveal className="col-span-12 md:col-span-8" as="figure">
               {hero && (
                 <CinematicImage
-                  src={`/images/${hero}`}
+                  src={hero}
                   alt={project.title}
                   aspect="16 / 10"
                   priority={i === 0}
@@ -32,13 +48,17 @@ export default function FeaturedWork({ projects }: { projects: Project[] }) {
               )}
             </Reveal>
 
-            {/* text column — 4 cols, aligned to the base of the large image */}
             <div className="col-span-12 flex flex-col justify-end md:col-span-4">
               <Reveal>
+                {demo && (
+                  <p className="caption mb-3 !tracking-[0.14em] text-[var(--color-gold-deep)]">
+                    {workCopy.placeholderLabel}
+                  </p>
+                )}
                 <DimensionCaption
                   items={[
-                    { label: "Location", value: `${project.location}, ${project.country}` },
-                    { label: "Sector", value: SECTOR_LABELS[project.sector] },
+                    { label: "Location", value: locationLine(project) },
+                    { label: "Typology", value: projectTypologyLabel(project) },
                     { label: "Role", value: project.role },
                   ]}
                 />
@@ -47,7 +67,9 @@ export default function FeaturedWork({ projects }: { projects: Project[] }) {
                 <h3 className="mt-5 font-serif text-[2rem] leading-[1.08] md:text-[2.25rem]">
                   {project.title}
                 </h3>
-                <p className="mt-4 text-[var(--color-ink-60)]">{project.brief}</p>
+                <p className="mt-4 text-[var(--color-ink-60)]">
+                  {projectDescription(project)}
+                </p>
                 <Link
                   href={`/work/${project.slug}`}
                   className="group mt-7 inline-block w-fit text-[0.95rem] font-medium"
@@ -60,7 +82,6 @@ export default function FeaturedWork({ projects }: { projects: Project[] }) {
               </Reveal>
             </div>
 
-            {/* two supporting images — offset below, cinematic */}
             {support.map((img, j) => (
               <Reveal
                 key={img.file}
@@ -73,7 +94,7 @@ export default function FeaturedWork({ projects }: { projects: Project[] }) {
                 }
               >
                 <CinematicImage
-                  src={`/images/${img.file}`}
+                  src={projectImageSrc(img.file)}
                   alt={img.alt}
                   aspect="4 / 3"
                   parallax={false}

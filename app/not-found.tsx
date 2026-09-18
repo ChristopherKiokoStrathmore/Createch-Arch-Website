@@ -1,6 +1,6 @@
 import Link from "next/link";
 import PageHeader from "@/components/page-header";
-import { projects } from "@/content/seed";
+import { notFoundCopy, projects } from "@/content";
 
 /**
  * 404. Exported to out/404.html; `public/.htaccess` points Apache's
@@ -17,9 +17,9 @@ export default function NotFound() {
   return (
     <>
       <PageHeader
-        eyebrow="404"
-        title="That page isn't here."
-        lede="The link may be old, or the address slightly off. The work is all still where it should be."
+        eyebrow={notFoundCopy.eyebrow}
+        title={notFoundCopy.title}
+        lede={notFoundCopy.lede}
       />
 
       <section className="gutter mx-auto max-w-[90rem] py-16 md:py-24">
@@ -44,7 +44,7 @@ export default function NotFound() {
           </Link>
         </div>
 
-        <p className="caption mt-16">Recent projects</p>
+        <p className="caption mt-16">{notFoundCopy.recent}</p>
         <ul className="mt-4 space-y-3">
           {featured.map((p) => (
             <li key={p.slug}>

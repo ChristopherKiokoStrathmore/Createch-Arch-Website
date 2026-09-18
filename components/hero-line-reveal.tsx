@@ -3,39 +3,37 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
+import { PAPER_BLUR } from "@/lib/placeholder";
+import type { HeroCopy } from "@/content/copy";
 
 /**
- * Hero line-to-built reveal (Build prompt §2.1 / §1.4) — the ONE signature
- * moment. Runs once on load, under 1.7s total:
- *   paper → gold line-drawing draws in (pathLength, 0.9s) →
- *   photograph fades in underneath (0.5s, overlapping) →
- *   lines fade to 0 (0.3s).
- * Reduced motion: photo simply fades in, no lines.
- *
- * H1 is real text (SEO / LCP), not an image.
+ * Hero line-to-built reveal — the ONE signature moment. Runs once on load,
+ * under 1.7s total. Copy comes from `@/content` so the live-site voice
+ * ("The art of layouts…") lives in one place. H1 is real text, not an image.
  */
 export default function HeroLineReveal({
   src,
   alt,
   paths,
   viewBox = "0 0 1600 1000",
+  copy,
 }: {
   src: string;
   alt: string;
   paths: string[];
   viewBox?: string;
+  copy: HeroCopy;
 }) {
   const reduced = useReducedMotion();
 
   return (
     <section className="relative flex min-h-[88svh] w-full flex-col justify-end overflow-hidden bg-[var(--color-paper)] pt-24 md:pt-28">
-      {/* photograph */}
       <motion.div
         className="absolute inset-0"
-        initial={{ opacity: reduced ? 0 : 0 }}
+        initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{
-          duration: reduced ? 0.5 : 0.5,
+          duration: 0.5,
           delay: reduced ? 0 : 0.6,
           ease: "easeOut",
         }}
@@ -47,23 +45,19 @@ export default function HeroLineReveal({
             fill
             priority
             sizes="100vw"
+            placeholder="blur"
+            blurDataURL={PAPER_BLUR}
             className="object-cover"
           />
         </div>
-        {/* one paper wash, shaped like the copy block — see .scrim-copy */}
         <div className="scrim-copy absolute inset-0" />
-        {/* and a light one at the top, so the nav reads over the photograph */}
         <div className="scrim-t absolute inset-x-0 top-0 h-40 md:h-48" />
       </motion.div>
 
-      {/* gold line drawing overlay — skipped entirely under reduced motion */}
       {!reduced && paths.length > 0 && (
         <motion.svg
-          // `kenburns` here is not decoration: the photograph below is already
-          // scaled 1.03 by the same animation, so without it the traced lines
-          // sit ~3% out of register with the building from the first frame and
-          // drift further as the zoom runs. Same class, same origin, same
-          // duration — the drawing stays locked to what it is drawing.
+          // Same kenburns class as the photograph so the traced lines stay
+          // locked to the building as the slow zoom runs.
           className="kenburns pointer-events-none absolute inset-0 h-full w-full"
           viewBox={viewBox}
           preserveAspectRatio="xMidYMid slice"
@@ -89,33 +83,25 @@ export default function HeroLineReveal({
         </motion.svg>
       )}
 
-      {/* copy — bottom-left */}
-      <div className="gutter relative z-10 mx-auto w-full max-w-[90rem] pb-12 md:pb-14">
+      <div className="gutter relative z-10 mx-auto w-full max-w-[90rem] pb-12 md:pb-16">
         <motion.div
           initial={{ opacity: 0, y: reduced ? 0 : 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: reduced ? 0.2 : 1.0, ease: "easeOut" }}
         >
-          {/* ink, not the usual gold: --color-gold-deep is tuned to clear AA
-              on paper (4.64:1) and cannot clear it over a photograph at any
-              scrim strength this hero would tolerate — it measures ~2.1:1
-              against the wash used here. Every other .kicker on the site sits
-              on paper and keeps the gold. */}
-          <p className="kicker mb-5 !text-[var(--color-ink)]">
-            Hospitality · Architecture · Interior Design
+          <p className="kicker mb-5 !text-[var(--color-ink)]">{copy.kicker}</p>
+          <h1 className="h-display max-w-[18ch]">{copy.title}</h1>
+          <p className="mt-6 max-w-[28ch] font-serif text-[1.35rem] leading-[1.3] text-[var(--color-ink)] md:text-[1.6rem]">
+            {copy.strap}
           </p>
-          <h1 className="h-display max-w-[16ch]">
-            Architecture for hospitality, from first line to final detail.
-          </h1>
-          <p className="mt-7 max-w-[46ch] text-[1.0625rem] text-[var(--color-ink)]/80">
-            Createch Architects is a Nairobi practice designing hotels,
-            restaurants and lifestyle destinations across Africa and India.
+          <p className="mt-5 max-w-[46ch] text-[1.0625rem] text-[var(--color-ink)]/80">
+            {copy.lede}
           </p>
           <Link
-            href="#featured-work"
+            href={copy.ctaHref}
             className="group mt-8 inline-block text-[0.95rem] font-medium"
           >
-            View work
+            {copy.cta}
             <span className="ml-1 inline-block transition-transform group-hover:translate-y-1">
               ↓
             </span>

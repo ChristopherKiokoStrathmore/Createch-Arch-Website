@@ -1,5 +1,10 @@
-import { SECTOR_LABELS, siteSettings, type Project } from "@/content/seed";
+import { site, type Project } from "@/content";
 import { SITE_URL as BASE } from "@/lib/site-url";
+import {
+  projectCoverSrc,
+  projectDescription,
+  projectTypologyLabel,
+} from "@/lib/project";
 
 /**
  * Structured data (Build prompt §5, Phase 5).
@@ -28,8 +33,8 @@ const ORGANIZATION = {
   "@id": `${BASE}/#organization`,
   name: "Createch Architects",
   url: BASE,
-  email: siteSettings.email,
-  telephone: siteSettings.phone,
+  email: site.email,
+  telephone: site.phone,
   description:
     "Nairobi-based architecture and interior design practice for hospitality, food and beverage, lifestyle spaces and high-end residential projects.",
   address: {
@@ -64,8 +69,8 @@ export function OrganizationJsonLd() {
             name: "Createch Architects",
             url: BASE,
             parentOrganization: { "@id": `${BASE}/#organization` },
-            email: siteSettings.email,
-            telephone: siteSettings.phone,
+            email: site.email,
+            telephone: site.phone,
             address: {
               "@type": "PostalAddress",
               addressLocality: "Nairobi",
@@ -88,7 +93,7 @@ export function OrganizationJsonLd() {
 }
 
 export function ProjectJsonLd({ project }: { project: Project }) {
-  const cover = project.heroImage ?? project.gallery[0]?.file;
+  const cover = projectCoverSrc(project);
   const anvi = { "@type": "Person" as const, name: "Anvi Shah" };
 
   return (
@@ -100,9 +105,9 @@ export function ProjectJsonLd({ project }: { project: Project }) {
         name: project.title,
         url: `${BASE}/work/${project.slug}`,
         description: project.seoDescription,
-        abstract: project.brief,
-        genre: SECTOR_LABELS[project.sector],
-        image: cover ? `${BASE}/images/${cover}` : undefined,
+        abstract: projectDescription(project),
+        genre: projectTypologyLabel(project),
+        image: cover ? `${BASE}${cover}` : undefined,
         locationCreated: {
           "@type": "Place",
           address: {

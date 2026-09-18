@@ -9,14 +9,15 @@ import Reveal from "@/components/reveal";
 import {
   anviBio,
   anviCredentials,
+  founderCopy,
   services,
+  studioCopy,
   studioPhilosophy,
-} from "@/content/seed";
+} from "@/content";
 
 export const metadata: Metadata = {
   title: "Studio",
-  description:
-    "Createch Architects is a Nairobi practice for hospitality, F&B, lifestyle and high-end residential design, founded by Anvi Shah after sixteen years across Kenya, India, East and West Africa.",
+  description: studioCopy.metaDescription,
   alternates: { canonical: "/studio" },
   openGraph: {
     title: "Studio · Createch Architects",
@@ -26,37 +27,27 @@ export const metadata: Metadata = {
     type: "profile",
     images: [
       {
-        url: "/images/founder/Anvi_Shah_Profile.jpg",
+        url: founderCopy.portraitSrc,
         width: 414,
         height: 659,
-        alt: "Anvi Shah, founder and principal architect of Createch Architects.",
+        alt: founderCopy.portraitAlt,
       },
     ],
   },
 };
 
-/**
- * Studio (Build prompt §3.4 / law #5): the practice, then the founder in full.
- * The homepage carries an abbreviated founder block; this is where the whole
- * profile and the credentials live.
- */
 export default function Studio() {
+  const c = studioCopy;
+
   return (
     <>
-      <PageHeader
-        eyebrow="The practice"
-        title="Design that has to work on opening night."
-        lede="Createch Architects is a Nairobi-based practice for hospitality, food and beverage, lifestyle spaces and high-end residential design."
-      />
+      <PageHeader eyebrow={c.eyebrow} title={c.title} lede={c.lede} />
 
-      {/* 01 — approach */}
       <section className="gutter mx-auto max-w-[90rem] py-20 md:py-28">
-        <SectionIndex number="01" label="Approach" />
+        <SectionIndex number={c.approach.number} label={c.approach.label} />
         <div className="grid gap-x-12 gap-y-10 md:grid-cols-12">
           <Reveal className="md:col-span-5">
-            <p className="h2 max-w-[20ch] font-serif">
-              Successful hospitality design goes beyond aesthetics.
-            </p>
+            <p className="h2 max-w-[20ch] font-serif">{c.approach.headline}</p>
           </Reveal>
           <Reveal index={1} className="md:col-span-7">
             <p className="max-w-[62ch] text-[var(--color-ink-60)]">
@@ -66,10 +57,9 @@ export default function Studio() {
         </div>
       </section>
 
-      {/* 02 — services */}
       <section className="bg-[var(--color-paper-2)]">
         <div className="gutter mx-auto max-w-[90rem] py-20 md:py-28">
-          <SectionIndex number="02" label="Services" />
+          <SectionIndex number={c.services.number} label={c.services.label} />
           <ul className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
             {services.map((service, i) => (
               <Reveal
@@ -87,15 +77,14 @@ export default function Studio() {
           </ul>
 
           <Reveal className="mt-20">
-            <p className="caption mb-2">Where the work has been</p>
+            <p className="caption mb-2">{c.services.where}</p>
             <FootprintStrip />
           </Reveal>
         </div>
       </section>
 
-      {/* 03 — founder */}
       <section className="gutter mx-auto max-w-[90rem] py-20 md:py-28">
-        <SectionIndex number="03" label="Founder" />
+        <SectionIndex number={c.founder.number} label={c.founder.label} />
         <div className="grid grid-cols-12 gap-x-10 gap-y-12">
           <Reveal
             as="figure"
@@ -103,8 +92,8 @@ export default function Studio() {
           >
             <div className="max-w-[380px] border border-[var(--color-line)] bg-[var(--color-paper)] p-3">
               <CinematicImage
-                src="/images/founder/Anvi_Shah_Profile.jpg"
-                alt="Anvi Shah, founder and principal architect of Createch Architects."
+                src={founderCopy.portraitSrc}
+                alt={founderCopy.portraitAlt}
                 aspect="414 / 659"
                 parallax={false}
                 sizes="(min-width: 768px) 380px, 60vw"
@@ -114,10 +103,8 @@ export default function Studio() {
 
           <div className="col-span-12 md:col-span-8">
             <Reveal>
-              <h2 className="h2 font-serif">Anvi Shah</h2>
-              <p className="caption mt-2 !tracking-[0.12em]">
-                Founder · Principal Architect
-              </p>
+              <h2 className="h2 font-serif">{c.founder.name}</h2>
+              <p className="caption mt-2 !tracking-[0.12em]">{c.founder.role}</p>
             </Reveal>
             <Reveal index={1}>
               <p className="mt-7 max-w-[62ch] text-[var(--color-ink-60)]">
@@ -127,24 +114,21 @@ export default function Studio() {
             <Reveal index={2}>
               <DimensionCaption
                 className="mt-8"
-                items={[
-                  { label: "Base", value: "Nairobi, Kenya" },
-                  { label: "Practising", value: "16+ years" },
-                ]}
+                items={[...c.founder.caption]}
               />
             </Reveal>
 
             <Reveal index={3}>
               <h3 className="caption mt-12 !tracking-[0.14em] text-[var(--color-gold-deep)]">
-                Qualifications &amp; registrations
+                {c.founder.qualifications}
               </h3>
               <ul className="mt-4 space-y-2">
-                {anviCredentials.map((c) => (
+                {anviCredentials.map((cred) => (
                   <li
-                    key={c}
+                    key={cred}
                     className="border-l border-[var(--color-line)] pl-4 text-[0.95rem] text-[var(--color-ink-60)]"
                   >
-                    {c}
+                    {cred}
                   </li>
                 ))}
               </ul>
@@ -153,17 +137,14 @@ export default function Studio() {
         </div>
       </section>
 
-      {/* 04 — CTA */}
       <section className="gutter mx-auto max-w-[90rem] border-t border-[var(--color-line)] py-16 md:py-20">
         <Reveal>
-          <h2 className="h2 max-w-[16ch] font-serif">
-            Tell us about your project.
-          </h2>
+          <h2 className="h2 max-w-[16ch] font-serif">{c.cta.headline}</h2>
           <Link
             href="/contact"
             className="group mt-7 inline-block text-[0.95rem] font-medium"
           >
-            Start a conversation
+            {c.cta.link}
             <span className="ml-1 inline-block transition-transform group-hover:translate-x-1">
               →
             </span>
