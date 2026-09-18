@@ -1,6 +1,8 @@
 import Image from "next/image";
 import dims from "@/content/image-dimensions.json";
-import type { GalleryImage } from "@/content/seed";
+import type { GalleryImage } from "@/content";
+import { projectImageSrc } from "@/lib/project";
+import { PAPER_BLUR } from "@/lib/placeholder";
 
 /**
  * Adaptive gallery (Build prompt §3.3):
@@ -37,7 +39,7 @@ export default function Gallery({ images }: { images: GalleryImage[] }) {
               style={{ aspectRatio: aspectOf(img.file) }}
             >
               <Image
-                src={`/images/${img.file}`}
+                src={projectImageSrc(img.file)}
                 alt={img.alt}
                 fill
                 sizes={
@@ -45,6 +47,8 @@ export default function Gallery({ images }: { images: GalleryImage[] }) {
                     ? "(min-width: 1440px) 1200px, 100vw"
                     : "(min-width: 768px) 700px, 100vw"
                 }
+                placeholder="blur"
+                blurDataURL={PAPER_BLUR}
                 className="object-cover"
               />
             </div>

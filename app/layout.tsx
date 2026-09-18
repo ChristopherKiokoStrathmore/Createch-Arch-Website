@@ -8,6 +8,7 @@ import { OrganizationJsonLd } from "@/components/json-ld";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SITE_ORIGIN } from "@/lib/site-url";
+import { metadataCopy, site } from "@/content";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -25,23 +26,20 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: SITE_ORIGIN,
   title: {
-    default: "Createch Architects",
-    template: "%s · Createch Architects",
+    default: metadataCopy.title,
+    template: `%s · ${site.name}`,
   },
-  description:
-    "Createch Architects is a Nairobi practice designing hotels, restaurants and lifestyle destinations across Africa and India.",
-  // Every page inherits this card unless it sets its own — the case studies
-  // override it with the project photograph in their generateMetadata.
+  description: metadataCopy.description,
   openGraph: {
     type: "website",
-    siteName: "Createch Architects",
+    siteName: site.name,
     locale: "en_KE",
     images: [
       {
         url: "/og.jpg",
         width: 1200,
         height: 630,
-        alt: "Createch Architects — architecture for hospitality, from first line to final detail.",
+        alt: metadataCopy.ogAlt,
       },
     ],
   },

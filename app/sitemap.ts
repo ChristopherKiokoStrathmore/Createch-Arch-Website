@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { projects } from "@/content/seed";
+import { projects } from "@/content";
 import { SITE_URL as BASE } from "@/lib/site-url";
 
 export const dynamic = "force-static";
