@@ -66,6 +66,12 @@ const nextConfig: NextConfig = {
           { key: "Cache-Control", value: "public, max-age=15552000, immutable" },
         ],
       },
+      {
+        source: "/brand/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=15552000, immutable" },
+        ],
+      },
     ];
   },
 };
