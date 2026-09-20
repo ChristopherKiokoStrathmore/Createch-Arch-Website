@@ -1,20 +1,20 @@
 import Link from "next/link";
 import Logo from "./logo";
-import {
-  footerCopy,
-  mailtoHref,
-  site,
-  telHref,
-  waHref,
-} from "@/content";
+import { mailtoHref, site, telHref, waHref } from "@/content";
+import { footerLabels } from "@/lib/chrome-utils";
+import type { ChromeConfig } from "@/lib/chrome-types";
 
 /**
- * Footer — ink band, the only dark surface. Contact comes from `site` in
- * `@/content`; empty social URLs do not render. Street address is omitted
- * until `site.address.line1` is filled.
+ * Footer — ink band, the only dark surface. Contact comes from chrome
+ * (falling back to `site` in `@/content`). Empty social URLs do not render.
  */
-export default function Footer() {
+export default function Footer({ chrome }: { chrome: ChromeConfig }) {
   const year = new Date().getFullYear();
+  const labels = footerLabels(chrome);
+  const email = chrome.contact.email || site.email;
+  const phone = chrome.contact.phone || site.phone;
+  const whatsapp = chrome.contact.whatsapp || site.whatsapp;
+  const location = chrome.contact.location || site.location;
 
   const socials = (
     [
@@ -37,23 +37,23 @@ export default function Footer() {
           <ul className="space-y-2">
             <li>
               <a
-                href={mailtoHref(site.email)}
+                href={mailtoHref(email)}
                 className="transition-colors hover:text-[var(--color-gold)]"
               >
-                {site.email}
+                {email}
               </a>
             </li>
             <li>
               <a
-                href={telHref(site.phone)}
+                href={telHref(phone)}
                 className="transition-colors hover:text-[var(--color-gold)]"
               >
-                {site.phone}
+                {phone}
               </a>
             </li>
             <li>
               <a
-                href={waHref(site.whatsapp)}
+                href={waHref(whatsapp)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition-colors hover:text-[var(--color-gold)]"
@@ -61,7 +61,7 @@ export default function Footer() {
                 WhatsApp
               </a>
             </li>
-            <li className="text-[var(--color-paper)]/60">{site.location}</li>
+            <li className="text-[var(--color-paper)]/60">{location}</li>
           </ul>
 
           <ul className="space-y-2">
@@ -82,7 +82,7 @@ export default function Footer() {
                 href="/work"
                 className="transition-colors hover:text-[var(--color-gold)]"
               >
-                {footerCopy.work}
+                {labels.work}
               </Link>
             </li>
             <li>
@@ -90,7 +90,7 @@ export default function Footer() {
                 href="/studio"
                 className="transition-colors hover:text-[var(--color-gold)]"
               >
-                {footerCopy.studio}
+                {labels.studio}
               </Link>
             </li>
             <li>
@@ -98,7 +98,7 @@ export default function Footer() {
                 href="/contact"
                 className="transition-colors hover:text-[var(--color-gold)]"
               >
-                {footerCopy.start}
+                {labels.start}
               </Link>
             </li>
           </ul>

@@ -4,14 +4,14 @@ import { SITE_URL as BASE } from "@/lib/site-url";
 export const dynamic = "force-static";
 
 /**
- * robots.txt. Everything is public — this is a portfolio, being indexed is the
- * point.
+ * robots.txt. The portfolio is public; /admin is not.
  */
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
+      disallow: ["/admin", "/api/admin"],
     },
     sitemap: `${BASE}/sitemap.xml`,
   };

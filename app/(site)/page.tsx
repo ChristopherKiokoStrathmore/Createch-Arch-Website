@@ -8,6 +8,7 @@ import SectionIndex from "@/components/section-index";
 import Reveal from "@/components/reveal";
 import Principles from "@/components/principles";
 import Presence from "@/components/presence";
+import ChromePlates from "@/components/chrome-plates";
 import {
   featuredProjects,
   heroAlt,
@@ -17,9 +18,9 @@ import {
   heroViewBox,
   homeCopy,
   mailtoHref,
-  site,
   waHref,
 } from "@/content";
+import { getChrome } from "@/lib/chrome";
 
 /**
  * Home — Hero, Featured Work, Studio (principles + presence + founder), Contact.
@@ -36,18 +37,30 @@ const PLAN_LINES = [
   "M 60 144 L 60 156 M 380 144 L 380 156",
 ];
 
-export default function Home() {
+export default async function Home() {
+  const chrome = await getChrome();
   const { featured, studio, contact } = homeCopy;
+  const heroSrc = chrome.hero.imageUrl || heroImage;
+  const heroLine = {
+    kicker: chrome.hero.kicker || heroCopy.kicker,
+    title: chrome.hero.title || heroCopy.title,
+    strap: chrome.hero.strap || heroCopy.strap,
+    lede: chrome.hero.lede || heroCopy.lede,
+    cta: chrome.hero.cta || heroCopy.cta,
+    ctaHref: chrome.hero.ctaHref || heroCopy.ctaHref,
+  };
 
   return (
     <>
       <HeroLineReveal
-        src={heroImage}
-        alt={heroAlt}
-        paths={heroPaths}
+        src={heroSrc}
+        alt={chrome.hero.imageAlt || heroAlt}
+        paths={heroSrc === heroImage ? heroPaths : []}
         viewBox={heroViewBox}
-        copy={heroCopy}
+        copy={heroLine}
       />
+
+      <ChromePlates chrome={chrome} />
 
       {featuredProjects.length > 0 && (
         <section
@@ -125,26 +138,31 @@ export default function Home() {
       </section>
 
       <section className="gutter mx-auto max-w-[90rem] py-24 md:py-36">
-        <SectionIndex number={contact.number} label={contact.label} />
+        <SectionIndex
+          number={contact.number}
+          label={chrome.contact.label || contact.label}
+        />
         <Reveal>
-          <h2 className="h-display max-w-[14ch]">{contact.headline}</h2>
+          <h2 className="h-display max-w-[14ch]">
+            {chrome.contact.headline || contact.headline}
+          </h2>
         </Reveal>
         <Reveal index={1}>
           <div className="mt-10 flex flex-col gap-3 text-[1.25rem] md:text-[1.5rem]">
             <a
-              href={mailtoHref(site.email)}
+              href={mailtoHref(chrome.contact.email)}
               className="group w-fit font-serif"
             >
-              {site.email}
+              {chrome.contact.email}
               <span className="block h-px w-0 bg-[var(--color-gold)] transition-all duration-200 group-hover:w-full" />
             </a>
             <a
-              href={waHref(site.whatsapp)}
+              href={waHref(chrome.contact.whatsapp)}
               target="_blank"
               rel="noopener noreferrer"
               className="group w-fit font-serif"
             >
-              WhatsApp {site.phone}
+              WhatsApp {chrome.contact.phone}
               <span className="block h-px w-0 bg-[var(--color-gold)] transition-all duration-200 group-hover:w-full" />
             </a>
           </div>

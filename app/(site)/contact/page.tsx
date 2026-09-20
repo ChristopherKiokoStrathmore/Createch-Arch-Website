@@ -12,6 +12,7 @@ import {
   telHref,
   waHref,
 } from "@/content";
+import { getChrome } from "@/lib/chrome";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -30,7 +31,11 @@ export const metadata: Metadata = {
  * enquiry. Street address only renders when `site.address.line1` is set —
  * we do not invent one.
  */
-function channels() {
+function channels(chrome: {
+  email: string;
+  phone: string;
+  whatsapp: string;
+}) {
   const list: {
     label: string;
     value: string;
@@ -38,27 +43,31 @@ function channels() {
     external: boolean;
   }[] = [];
 
-  if (site.email) {
+  const email = chrome.email || site.email;
+  const phone = chrome.phone || site.phone;
+  const whatsapp = chrome.whatsapp || site.whatsapp;
+
+  if (email) {
     list.push({
       label: "Email",
-      value: site.email,
-      href: mailtoHref(site.email),
+      value: email,
+      href: mailtoHref(email),
       external: false,
     });
   }
-  if (site.whatsapp) {
+  if (whatsapp) {
     list.push({
       label: "WhatsApp",
-      value: site.phone,
-      href: waHref(site.whatsapp),
+      value: phone,
+      href: waHref(whatsapp),
       external: true,
     });
   }
-  if (site.phone) {
+  if (phone) {
     list.push({
       label: "Telephone",
-      value: site.phone,
-      href: telHref(site.phone),
+      value: phone,
+      href: telHref(phone),
       external: false,
     });
   }
@@ -74,8 +83,9 @@ function channels() {
   return list;
 }
 
-export default function Contact() {
-  const CHANNELS = channels();
+export default async function Contact() {
+  const chrome = await getChrome();
+  const CHANNELS = channels(chrome.contact);
 
   return (
     <>
@@ -123,7 +133,7 @@ export default function Contact() {
 
         <Reveal index={1}>
           <p className="caption mt-14 !tracking-[0.12em]">
-            {contactCopy.studioLabel} · {site.location}
+            {contactCopy.studioLabel} · {chrome.contact.location || site.location}
           </p>
         </Reveal>
       </section>
