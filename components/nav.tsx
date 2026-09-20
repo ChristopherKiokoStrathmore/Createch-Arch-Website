@@ -83,15 +83,14 @@ export default function Nav() {
   }, [open, close]);
 
   return (
-    <header
-      ref={headerRef}
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        scrolled || open
-          ? "border-b border-[var(--color-line)] bg-[var(--color-paper)]/80 backdrop-blur-md"
-          : "bg-transparent"
-      }`}
-    >
-      <nav className="gutter mx-auto flex max-w-[90rem] items-center justify-between py-4">
+    <header ref={headerRef} className="fixed inset-x-0 top-0 z-50">
+      <nav
+        className={`gutter mx-auto flex max-w-[90rem] items-center justify-between py-4 transition-colors duration-300 ${
+          scrolled || open
+            ? "border-b border-[var(--color-line)] bg-[var(--color-paper)]/80 backdrop-blur-md"
+            : "bg-transparent"
+        }`}
+      >
         <Link href="/" aria-label="Createch Architects — home" onClick={() => setOpen(false)}>
           <Logo />
         </Link>
