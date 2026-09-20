@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Logo from "./logo";
-import { nav } from "@/content/copy";
+import type { ChromeNavLink } from "@/lib/chrome-types";
 
-export default function Nav() {
+export default function Nav({ links }: { links: readonly ChromeNavLink[] }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -96,7 +96,7 @@ export default function Nav() {
         </Link>
 
         <ul className="hidden items-center gap-8 md:flex">
-          {nav.map((l) => (
+          {links.map((l) => (
             <li key={l.href}>
               <Link
                 href={l.href}
@@ -130,7 +130,7 @@ export default function Nav() {
           className="fixed inset-x-0 bottom-0 top-[var(--nav-h,3.5rem)] z-40 overflow-y-auto bg-[var(--color-paper)] md:hidden"
         >
           <ul className="gutter flex flex-col gap-6 py-10">
-            {nav.map((l) => (
+            {links.map((l) => (
               <li key={l.href}>
                 <Link
                   href={l.href}

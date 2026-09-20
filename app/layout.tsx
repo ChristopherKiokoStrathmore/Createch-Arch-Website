@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
-import LenisProvider from "@/components/lenis-provider";
-import Nav from "@/components/nav";
-import Footer from "@/components/footer";
-import { OrganizationJsonLd } from "@/components/json-ld";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SITE_ORIGIN } from "@/lib/site-url";
@@ -56,20 +52,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable} h-full`}>
       <body className="flex min-h-full flex-col">
-        <OrganizationJsonLd />
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:bg-[var(--color-ink)] focus:px-4 focus:py-2 focus:text-[var(--color-paper)]"
-        >
-          Skip to content
-        </a>
-        <LenisProvider>
-          <Nav />
-          <main id="main" className="flex-1">
-            {children}
-          </main>
-          <Footer />
-        </LenisProvider>
+        {children}
         <Analytics />
         <SpeedInsights />
       </body>

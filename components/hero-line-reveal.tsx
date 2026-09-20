@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { PAPER_BLUR } from "@/lib/placeholder";
+import { isRemoteSrc } from "@/lib/chrome-utils";
 import type { HeroCopy } from "@/content/copy";
 
 /**
@@ -25,6 +26,7 @@ export default function HeroLineReveal({
   copy: HeroCopy;
 }) {
   const reduced = useReducedMotion();
+  const remote = isRemoteSrc(src);
 
   return (
     <section className="relative flex min-h-[88svh] w-full flex-col justify-end overflow-hidden bg-[var(--color-paper)] pt-24 md:pt-28">
@@ -45,8 +47,9 @@ export default function HeroLineReveal({
             fill
             priority
             sizes="100vw"
-            placeholder="blur"
-            blurDataURL={PAPER_BLUR}
+            placeholder={remote ? undefined : "blur"}
+            blurDataURL={remote ? undefined : PAPER_BLUR}
+            unoptimized={remote}
             className="object-cover"
           />
         </div>
