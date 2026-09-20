@@ -93,8 +93,7 @@ export default function Nav() {
     >
       <nav className="gutter mx-auto flex max-w-[90rem] items-center justify-between py-4">
         <Link href="/" aria-label="Createch Architects — home" onClick={() => setOpen(false)}>
-          <Logo variant="mark" className="md:hidden" />
-          <Logo variant="full" className="hidden md:inline-flex" />
+          <Logo />
         </Link>
 
         <ul className="hidden items-center gap-8 md:flex">
