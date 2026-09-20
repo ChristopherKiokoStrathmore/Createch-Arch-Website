@@ -10,9 +10,13 @@ import Image from "next/image";
  * lockup, not a new drawing.
  *
  * variant:
- *   "full"    — mark + CREATECH ARCHITECTS (nav, desktop)
- *   "mark"    — mark only (nav, mobile)
+ *   "full"    — one mark + CREATECH ARCHITECTS (nav). Wordmark from md up.
+ *   "mark"    — mark only
  *   "inverse" — paper-plated mark + paper wordmark (dark footer)
+ *
+ * Mount this once per lockup. Two <Logo> nodes (e.g. mark + full) paint the
+ * PNG twice; Tailwind `hidden` cannot reliably hide one when the other root
+ * also has `inline-flex`.
  */
 export const BRAND_LOGO = {
   src: "/brand/createch-logo.png",
@@ -58,7 +62,9 @@ export default function Logo({
     <span className={`inline-flex items-center gap-3 ${className}`}>
       {framed}
       <span
-        className="text-sm font-medium tracking-[0.18em]"
+        className={`text-sm font-medium tracking-[0.18em] ${
+          inverse ? "" : "hidden md:inline"
+        }`}
         style={{ color: ink }}
       >
         CREATECH ARCHITECTS
