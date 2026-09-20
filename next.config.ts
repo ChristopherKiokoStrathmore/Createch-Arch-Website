@@ -38,7 +38,7 @@ const SECURITY_HEADERS = [
       "script-src 'self' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
       "font-src 'self'",
-      "img-src 'self' data:",
+      "img-src 'self' data: https: http://localhost:* http://127.0.0.1:*",
       "connect-src 'self'",
       "form-action 'self'",
       "frame-ancestors 'self'",
@@ -54,6 +54,11 @@ const nextConfig: NextConfig = {
     loaderFile: "./lib/image-loader.ts",
     deviceSizes: IMAGE_WIDTHS,
     imageSizes: [],
+    remotePatterns: [
+      { protocol: "https", hostname: "**" },
+      { protocol: "http", hostname: "localhost" },
+      { protocol: "http", hostname: "127.0.0.1" },
+    ],
   },
 
   async headers() {

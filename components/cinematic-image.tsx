@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRef } from "react";
 import { PAPER_BLUR } from "@/lib/placeholder";
+import { isRemoteSrc } from "@/lib/chrome-utils";
 import {
   motion,
   useInView,
@@ -59,6 +60,7 @@ export default function CinematicImage({
   className?: string;
 }) {
   const reduced = useReducedMotion();
+  const remote = isRemoteSrc(src);
   const frameRef = useRef<HTMLDivElement>(null);
   const inView = useInView(frameRef, { once: true, margin: "0px 0px -12% 0px" });
   const { scrollYProgress } = useScroll({
@@ -115,8 +117,9 @@ export default function CinematicImage({
             fill
             sizes={sizes}
             priority={priority}
-            placeholder="blur"
-            blurDataURL={PAPER_BLUR}
+            placeholder={remote ? undefined : "blur"}
+            blurDataURL={remote ? undefined : PAPER_BLUR}
+            unoptimized={remote}
             className={`object-cover transition-transform duration-[900ms] ease-out ${
               hover ? "group-hover:scale-[1.04]" : ""
             } motion-reduce:transition-none motion-reduce:group-hover:scale-100`}

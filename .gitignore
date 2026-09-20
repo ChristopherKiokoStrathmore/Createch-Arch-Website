@@ -55,3 +55,7 @@ scripts/.*.log
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# chrome JSON written during local `next dev` when Blob/Railway are unset.
+# Production persistence is Vercel Blob or Railway — never /tmp.
+/data/chrome.json
