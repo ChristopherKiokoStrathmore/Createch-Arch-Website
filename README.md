@@ -32,10 +32,14 @@ npm run dev                    # http://localhost:3000
 
 ### Rendering
 
-Every page is prerendered at build (`○` static, `●` SSG) — the content never
-changes between deploys, so nothing needs to be rendered per request. The one
-piece of server code is the enquiry Server Action in `app/contact/actions.ts`,
-which runs as a Vercel Function only when someone submits the form.
+Public pages are cached (ISR, 60s) and revalidated when an editor saves chrome
+from `/admin` (`revalidateTag('chrome', 'max')` plus `revalidatePath` on the
+public routes). The enquiry Server Action in `app/(site)/contact/actions.ts`
+runs as a Vercel Function only when someone submits the form.
+
+Site chrome — colours, nav labels, hero line, contact strip, optional SEO
+placeholders, and image IDs/URLs — is edited at `/admin` behind a PIN. Image
+**bytes** are uploaded to Railway, not stored in Vercel `/tmp` or in the JSON.
 
 Security headers and image cache-control are set in `next.config.ts` under
 `headers()`. There is no `vercel.json` and no `.htaccess`; keeping them in
@@ -44,12 +48,15 @@ Security headers and image cache-control are set in `next.config.ts` under
 ### Content
 
 Visitor-facing words live in **`content/copy.ts`**. Case studies live in
-**`content/seed.ts`**. Import either file, or the barrel `@/content`. There is
-no CMS: eleven projects that change once or twice a year did not justify one.
+**`content/seed.ts`**. Import either file, or the barrel `@/content`. Chrome
+overlays (nav, hero, contact, colours) are stored as JSON — see
+[Admin chrome](#admin-chrome). Project case studies are still code, not the
+admin editor.
 
-To change copy (hero, principles, contact labels, enquiry messages), edit
-`content/copy.ts`. To add a case study, edit `content/seed.ts` and drop
-photographs in `public/images/{slug}/`. Push — Vercel rebuilds on commit.
+To change copy that is not exposed in `/admin` (principles, enquiry messages,
+studio biography), edit `content/copy.ts`. To add a case study, edit
+`content/seed.ts` and drop photographs in `public/images/{slug}/`. Push —
+Vercel rebuilds on commit.
 
 Project shape (`content/seed.ts`):
 
@@ -112,6 +119,10 @@ every page of this site.
    | Variable | Notes |
    | --- | --- |
    | `NEXT_PUBLIC_SITE_URL` | `https://createch.co.ke`. Baked in at build time — changing it needs a redeploy, not a restart. |
+   | `ADMIN_PIN` / `ADMIN_SECRET_KEY` | Either unlocks `/admin` (Hobbies pattern: `X-Admin-Key` + session). Do not hardcode a PIN. |
+   | `CREATECH_API_URL` | Railway origin for image upload and chrome fallback (`/api/arch/images/`, `/api/arch/chrome/`). |
+   | `ARCH_ADMIN_SECRET` | Server-only `X-Admin-Key` sent to Railway. Never exposed to the browser. |
+   | `BLOB_READ_WRITE_TOKEN` | Optional. Preferred durable store for chrome JSON via `@vercel/blob`. OIDC (`BLOB_STORE_ID`) is enough on Vercel when a Blob store is connected. |
    | `RESEND_API_KEY` | Required to send. Without it the form does not silently fail; it tells the visitor to email directly. |
    | `ENQUIRY_TO_EMAIL` | Where enquiries land. Falls back to `CONTACT_TO_EMAIL`, then `anvi@createch.co.ke`. |
    | `ENQUIRY_FROM_EMAIL` | Must be on a domain **verified in Resend**, or delivery is rejected. Falls back to `MAIL_FROM`. |
@@ -131,6 +142,7 @@ every page of this site.
 
 ```
 /            /work            /studio          /contact       → 200
+/admin       → PIN gate (not indexed)
 /sitemap.xml → 15 URLs        /robots.txt      → sitemap link
 /nonsense    → the site's own 404, not a platform error page
 ```
@@ -151,6 +163,33 @@ and this is how you find out whether it costs you anything.
 
 To remove tracking entirely, delete the two components from `app/layout.tsx`
 and uninstall `@vercel/analytics` and `@vercel/speed-insights`.
+
+---
+
+## Admin chrome
+
+`/admin` is a PIN gate matching Createch Hobbies: type `ADMIN_PIN` or
+`ADMIN_SECRET_KEY`, stored in `sessionStorage`, sent as `X-Admin-Key`, plus an
+httpOnly session cookie. Robots are told to skip `/admin`.
+
+The editor writes **chrome JSON** (layout, copy, image IDs/URLs). Persistence,
+in order:
+
+1. **Vercel Blob** `@vercel/blob` at pathname `createch/chrome.json` when
+   `BLOB_READ_WRITE_TOKEN` or a connected store (`BLOB_STORE_ID`) is present.
+2. **Railway** `GET/PUT {CREATECH_API_URL}/api/arch/chrome/` with
+   `X-Admin-Key: {ARCH_ADMIN_SECRET}` if Blob is not configured.
+3. **Local file** `data/chrome.json` for `next dev` only (gitignored). This
+   does not survive a Vercel deploy. `/tmp` is never used.
+
+Image uploads `POST` multipart field `file` to
+`{CREATECH_API_URL}/api/arch/images/`. The JSON never contains image bytes.
+
+An empty store does not blank the live site — values fall back to
+`content/copy.ts` / `app/globals.css`. Saving calls `revalidateTag('chrome', 'max')`
+and `revalidatePath` on `/`, `/work`, `/studio`, `/contact`.
+
+SEO fields in chrome are optional placeholders. WordPress SEO is a later layer.
 
 ---
 

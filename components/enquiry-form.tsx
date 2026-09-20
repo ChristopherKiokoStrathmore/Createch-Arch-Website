@@ -1,8 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
-import { submitEnquiry } from "@/app/contact/actions";
-import { EMPTY_STATE } from "@/app/contact/enquiry-state";
+import { submitEnquiry } from "@/app/(site)/contact/actions";
+import { EMPTY_STATE } from "@/app/(site)/contact/enquiry-state";
 import { enquiryCopy, mailtoHref, site, waHref } from "@/content/copy";
 
 /**
