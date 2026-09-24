@@ -120,7 +120,7 @@ every page of this site.
    | --- | --- |
    | `NEXT_PUBLIC_SITE_URL` | `https://createch.co.ke`. Baked in at build time — changing it needs a redeploy, not a restart. |
    | `ADMIN_PIN` / `ADMIN_SECRET_KEY` | Either unlocks `/admin` (Hobbies pattern: `X-Admin-Key` + session). Do not hardcode a PIN. |
-   | `CREATECH_API_URL` | Railway origin for image upload and chrome fallback (`/api/arch/images/`, `/api/arch/chrome/`). |
+   | `CREATECH_API_URL` | Railway origin for image upload and chrome fallback (`/api/admin/media/`, `/api/admin/chrome/`). |
    | `ARCH_ADMIN_SECRET` | Server-only `X-Admin-Key` sent to Railway. Never exposed to the browser. |
    | `BLOB_READ_WRITE_TOKEN` | Optional. Preferred durable store for chrome JSON via `@vercel/blob`. OIDC (`BLOB_STORE_ID`) is enough on Vercel when a Blob store is connected. |
    | `RESEND_API_KEY` | Required to send. Without it the form does not silently fail; it tells the visitor to email directly. |
@@ -177,13 +177,13 @@ in order:
 
 1. **Vercel Blob** `@vercel/blob` at pathname `createch/chrome.json` when
    `BLOB_READ_WRITE_TOKEN` or a connected store (`BLOB_STORE_ID`) is present.
-2. **Railway** `GET/PUT {CREATECH_API_URL}/api/arch/chrome/` with
+2. **Railway** `GET/PUT {CREATECH_API_URL}/api/admin/chrome/` with
    `X-Admin-Key: {ARCH_ADMIN_SECRET}` if Blob is not configured.
 3. **Local file** `data/chrome.json` for `next dev` only (gitignored). This
    does not survive a Vercel deploy. `/tmp` is never used.
 
 Image uploads `POST` multipart field `file` to
-`{CREATECH_API_URL}/api/arch/images/`. The JSON never contains image bytes.
+`{CREATECH_API_URL}/api/admin/media/`. The JSON never contains image bytes.
 
 An empty store does not blank the live site — values fall back to
 `content/copy.ts` / `app/globals.css`. Saving calls `revalidateTag('chrome', 'max')`
