@@ -35,7 +35,7 @@ export async function GET(req: Request) {
       { status: 503 },
     );
   }
-  if (!isAdminAuthorized(req)) {
+  if (!(await isAdminAuthorized(req))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -63,7 +63,7 @@ export async function PUT(req: Request) {
       { status: 503 },
     );
   }
-  if (!isAdminAuthorized(req)) {
+  if (!(await isAdminAuthorized(req))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import ChangePin from "@/components/admin/change-pin";
 import ImageLibrary from "@/components/admin/image-library";
 import { useAdminAuth } from "@/context/admin-auth-context";
 import { DEFAULT_CHROME } from "@/lib/chrome-defaults";
@@ -489,6 +490,7 @@ export default function ChromeEditor() {
             </div>
           </form>
         )}
+        {loading ? null : <ChangePin />}
       </div>
     </div>
   );

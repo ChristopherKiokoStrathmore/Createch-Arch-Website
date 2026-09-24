@@ -97,3 +97,4 @@ export const LOCAL_CHROME_FILE = "data/chrome.json";
 // Both are admin routes: they require X-Admin-Key.
 export const RAILWAY_CHROME_PATH = "/api/admin/chrome/";
 export const RAILWAY_IMAGES_PATH = "/api/admin/media/";
+export const RAILWAY_PIN_PATH = "/api/admin/pin/";

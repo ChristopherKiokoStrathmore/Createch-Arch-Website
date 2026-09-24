@@ -3,6 +3,7 @@ import "server-only";
 import {
   RAILWAY_CHROME_PATH,
   RAILWAY_IMAGES_PATH,
+  RAILWAY_PIN_PATH,
 } from "@/lib/chrome-types";
 import {
   httpUrl,
@@ -176,4 +177,71 @@ export async function railwayDeleteImage(id: string): Promise<void> {
       /* try the next form */
     }
   }
+}
+
+/** The /admin PIN as Railway holds it: whether one is set, and its change counter. */
+export type RailwayPinState = { set: boolean; version: number };
+
+function pinState(json: unknown): RailwayPinState | null {
+  if (!json || typeof json !== "object") return null;
+  const { set, version } = json as { set?: unknown; version?: unknown };
+  if (typeof set !== "boolean" || typeof version !== "number") return null;
+  return { set, version };
+}
+
+/** null when Railway is unconfigured or unreachable — callers must fail closed. */
+export async function railwayGetPinState(): Promise<RailwayPinState | null> {
+  if (!railwayConfigured()) return null;
+  try {
+    const res = await railwayFetch(RAILWAY_PIN_PATH, { method: "GET", fresh: true });
+    if (!res.ok) {
+      console.error("[createch] railway pin GET", res.status);
+      return null;
+    }
+    return pinState(await res.json().catch(() => null));
+  } catch (err) {
+    console.error("[createch] railway pin GET failed", err);
+    return null;
+  }
+}
+
+export async function railwayVerifyPin(
+  pin: string,
+): Promise<(RailwayPinState & { ok: boolean }) | null> {
+  if (!railwayConfigured()) return null;
+  try {
+    const res = await railwayFetch(RAILWAY_PIN_PATH, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pin }),
+      fresh: true,
+    });
+    if (!res.ok) return null;
+    const json: unknown = await res.json().catch(() => null);
+    const state = pinState(json);
+    if (!state) return null;
+    return { ...state, ok: (json as { ok?: unknown }).ok === true };
+  } catch (err) {
+    console.error("[createch] railway pin verify failed", err);
+    return null;
+  }
+}
+
+export async function railwaySetPin(pin: string): Promise<RailwayPinState> {
+  const res = await railwayFetch(RAILWAY_PIN_PATH, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ pin }),
+    fresh: true,
+  });
+  const json: unknown = await res.json().catch(() => null);
+  const state = res.ok ? pinState(json) : null;
+  if (!state) {
+    const msg =
+      json && typeof json === "object" && "error" in json
+        ? String((json as { error: unknown }).error)
+        : `PIN change failed (${res.status})`;
+    throw new Error(msg.slice(0, 200));
+  }
+  return state;
 }

@@ -5,6 +5,7 @@ import {
   adminCookieAttributes,
   adminCookieValue,
   isAdminAuthorized,
+  isPinCorrect,
 } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
@@ -16,7 +17,7 @@ export async function GET(req: Request) {
       { status: 503 },
     );
   }
-  if (!isAdminAuthorized(req)) {
+  if (!(await isAdminAuthorized(req))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   return NextResponse.json({ ok: true });
@@ -39,13 +40,11 @@ export async function POST(req: Request) {
   }
 
   const clean = pin.trim().replace(/[^\x20-\x7E]/g, "");
-  const headers = new Headers(req.headers);
-  headers.set("x-admin-key", clean || "invalid");
-  if (!isAdminAuthorized(new Request(req.url, { headers }))) {
+  if (!(await isPinCorrect(req, clean))) {
     return NextResponse.json({ error: "Invalid PIN" }, { status: 401 });
   }
 
-  const token = adminCookieValue();
+  const token = await adminCookieValue();
   if (!token) {
     return NextResponse.json(
       { error: "Admin PIN is not configured on this deployment." },
