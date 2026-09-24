@@ -93,5 +93,7 @@ export type ChromePersistence = {
 export const CHROME_CACHE_TAG = "chrome";
 export const CHROME_BLOB_PATHNAME = "createch/chrome.json";
 export const LOCAL_CHROME_FILE = "data/chrome.json";
-export const RAILWAY_CHROME_PATH = "/api/arch/chrome/";
-export const RAILWAY_IMAGES_PATH = "/api/arch/images/";
+// Routes on the Django backend (Createch-Arch-Backend, arch_media/urls.py).
+// Both are admin routes: they require X-Admin-Key.
+export const RAILWAY_CHROME_PATH = "/api/admin/chrome/";
+export const RAILWAY_IMAGES_PATH = "/api/admin/media/";

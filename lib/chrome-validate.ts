@@ -26,6 +26,12 @@ function optionalStr(value: unknown, max: number): string {
   return str(value, "", max);
 }
 
+/** Django primary keys arrive as integers; the chrome document stores ids as strings. */
+function idStr(value: unknown): string {
+  if (typeof value === "number" && Number.isSafeInteger(value)) return String(value);
+  return optionalStr(value, 120);
+}
+
 function hexColour(value: unknown, fallback: string): string {
   if (typeof value !== "string") return fallback;
   const trimmed = value.trim();
@@ -101,7 +107,7 @@ export function parseImageRecord(raw: unknown, order = 0): ChromeImage | null {
   if (!rec) return null;
   const nested = asRecord(rec.image) ?? asRecord(rec.file);
   const src = nested ?? rec;
-  const id = optionalStr(src.id ?? src.pk ?? src.uuid ?? rec.id, 120);
+  const id = idStr(src.id ?? src.pk ?? src.uuid ?? rec.id);
   const url = httpUrl(src.url ?? src.src ?? src.public_url ?? src.image_url);
   if (!id || !url) return null;
   return {
